@@ -24,10 +24,10 @@ namespace ucsl::bits {
 		constexpr U value() const { return bits; }
 		constexpr operator U() const { return bits; }
 		constexpr void reset() { bits = U{}; }
-		constexpr bool test(T bit) const { return bits & (1 << static_cast<U>(bit)); }
+		constexpr bool test(T bit) const { return bits & (static_cast<U>(1) << static_cast<U>(bit)); }
 		constexpr void flip(T bit) { set(bit, !test(bit)); }
-		constexpr void reset(T bit) { bits = bits & ~(1 << static_cast<U>(bit)); }
-		constexpr void set(T bit) { bits = bits | (1 << static_cast<U>(bit)); }
+		constexpr void reset(T bit) { bits = bits & ~(static_cast<U>(1) << static_cast<U>(bit)); }
+		constexpr void set(T bit) { bits = bits | (static_cast<U>(1) << static_cast<U>(bit)); }
 		constexpr void set(T bit, bool flag) {
 			if (flag)
 				set(bit);

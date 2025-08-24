@@ -212,25 +212,41 @@ namespace ucsl::resources::cemt::v100000 {
 	};
 
 	struct EmitterParam {
-		char gap1[0x28];
+		csl::math::Position position;
+		csl::math::Position rotation;
+		csl::math::Position scale;
+		unsigned int cameraFlags; //changes how the emitter faces the camera (billboard style, using the values etc)
 		Collection<Unk1Data>* unk1;
 		Collection<Unk2Data>* unk2;
 		Collection<Unk3Data>* unk3;
-		char gap2[0x20];
+		bool positionRandom;
+		csl::math::Position randomPosition;
+		float spread;
+		float unkE4;
+		float spreadAngle;
+		unsigned char unkEC;
+		unsigned char unkED;
+		unsigned char unkEE; //makes the emitter last longer seemingly?
+		unsigned char unkEF;
 		Collection<Unk4Data>* unk4;
 		Collection<Unk5Data>* unk5;
 		Collection<Unk6Data>* unk6;
 		Collection<Unk7Data>* unk7;
-		unsigned int unk7a;
-		float unk7b;
+		unsigned int unk7a; //when 1, turns the emitter off
+		float frequency;
 		float unk7c;
-		float unk7d;
-		float unk7e;
-		char gap3[0x14];
-		float unk7f;
-		uint32_t unk78;
+		float emitterCount;
+		float frequencyControlUnk; //seems to make a sinewave of some sort, the higher this is, the longer it takes to respawn this emitter, it keeps going from slow to fast back to slow, like a sinewave
+		int unk124;
+		float unk128;
+		float unk12C;
+		float unk130; //acts like transparency on some particles
+		float duration;
+		float startDelay;
+		float fadeSpeed;
 		Collection<Unk8Data>* unk8;
-		uint64_t unk7f1;
+		uint32_t unk7f1;
+		float lifeEndTime;
 		float emitSpeed[6];
 		float emitVectorUnk;
 		uint32_t gap4a;
@@ -264,7 +280,7 @@ namespace ucsl::resources::cemt::v100000 {
 		unsigned char patchVersion;
 		unsigned char buildVersion;
 		char name[0x80];
-		unsigned int numUnks;
+		unsigned int animationBufferSize;
 		unsigned int numEffects; // 8C
 
 

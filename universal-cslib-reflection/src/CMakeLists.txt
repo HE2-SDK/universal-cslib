@@ -39,5 +39,6 @@ target_sources(universal-cslib-reflection
         "ucsl-reflection/reflections/resources/terrain-material/v1.h"
         "ucsl-reflection/reflections/resources/vertex-animation-texture/v1-miller.h"
         "ucsl-reflection/reflections/resources/vertex-animation-texture/v1-rangers.h"
+        "ucsl-reflection/reflections/resources/vibration/v21.h"
         "ucsl-reflection/reflections/basic-types.h"
 )
