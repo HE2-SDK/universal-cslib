@@ -39,6 +39,7 @@ target_sources(universal-cslib
         "ucsl/resources/rfl/v2.h"
         "ucsl/resources/scene/v106.h"
         "ucsl/resources/scfnt/v1000.h"
+        "ucsl/resources/shlightfield/v1.h"
         "ucsl/resources/sobj/v1.h"
         "ucsl/resources/svcol/v1.h"
         "ucsl/resources/swif/v6.h"

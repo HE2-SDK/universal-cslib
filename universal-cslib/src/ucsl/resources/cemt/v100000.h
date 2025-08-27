@@ -105,10 +105,61 @@ namespace ucsl::resources::cemt::v100000 {
 		Settings settings;
 	};
 
-	struct Texture {
+	struct TextureParam {
+		enum class UVFlags {
+			UNK0, //0x01
+			UNK1, //0x02
+			UNK2, //0x04
+			UNK3, //0x08
+			UNK4, //0x10
+			UNK5, //0x20
+			UNK6, //0x40
+			UNK7, //0x80
+			UNK8, //0x100
+			SCROLL_U, //0x200
+			SCROLL_V, //0x400
+			UNK11, //0x800
+			UNK12, //0x1000
+			UNK13, //0x2000
+			SCALE_U, //0x4000
+			SCALE_V //0x8000
+		};
+
 		char name[128];
-		void* texture; // hh::needle::Texture
-		char gap[0xA8];
+		int flags0;
+		csl::ut::Bitset<UVFlags> flags1;
+		char unk0;
+		char unk1;
+		char unk2;
+		char unk3;
+		short unk4;
+		short unk5;
+		short unk6;
+		short unk7;
+		int unk8;
+		int unk9;
+		int unk10;
+		float scrollColorX;
+		float scrollColorY;
+		float scrollColorRandomX;
+		float scrollColorRandomY;
+		float unk11;
+		float unk12;
+		float unk13;
+		float unk14;
+		float uvTilingX;
+		float uvTilingY;
+		float uvRotation;
+		float uvOffsetX;
+		float uvOffsetY;
+		int unk15;
+		Collection<Unk1Data>* unk16;
+		int64_t unk17;
+		Collection<Unk1Data>* unk18;
+		float unk19;
+		float unk20;
+		char unk21[40];
+		int64_t unk22;
 	};
 
 	struct Table {
@@ -185,7 +236,7 @@ namespace ucsl::resources::cemt::v100000 {
 		unsigned char unk18a3;
 		unsigned char particleInfo3;
 		char gap7[0x16];
-		Texture textures[4];
+		TextureParam textures[4];
 		unsigned int textureCount;
 		ChildEffect childEffects[16];
 		ModifierParam modifiers[8];
