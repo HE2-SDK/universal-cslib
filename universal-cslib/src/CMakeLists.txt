@@ -27,6 +27,7 @@ target_sources(universal-cslib
         "ucsl/resources/map/v1.h"
         "ucsl/resources/master-level/v0.h"
         "ucsl/resources/material/v0.h"
+        "ucsl/resources/ntsp/v1.h"
         "ucsl/resources/nxs/v1.h"
         "ucsl/resources/object-world/v2.h"
         "ucsl/resources/object-world/v3.h"
