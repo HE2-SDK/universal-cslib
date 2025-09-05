@@ -40,7 +40,7 @@ namespace ucsl::resources::converse_text::v6::reflections {
     using Font = structure<impl::Font, "Font", void,
         field<const char*, "idName">,
         field<const char*, "fontName">,
-        field<float*, "unk0">,
+        field<float*, "defaultSize">,
         field<float*, "unk1">,
         field<float*, "unk2">,
         field<int*, "unk3">,
@@ -71,10 +71,10 @@ namespace ucsl::resources::converse_text::v6::reflections {
 
     using CnvrsTextData = structure<impl::CnvrsTextData, "CnvrsTextData", void,
         field<unsigned char, "version">,
-        field<char, "unk0">,
+        field<unsigned char, "sheetAmount">, //unused
         field<unsigned short, "entryAmount">,
         field<dynamic_carray<Entry, impl::CnvrsTextData, [](const impl::CnvrsTextData& parent) -> size_t { return parent.entryAmount; }>*, "entries">,
-        field<const char*, "languageName">
+        field<const char*, "sheetName">
     >;
 }
 

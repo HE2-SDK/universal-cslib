@@ -15,6 +15,7 @@ target_sources(universal-cslib
         "ucsl/rfl/ranges.h"
         "ucsl/resources/asm/v103-rangers.h"
         "ucsl/resources/asm/v103-miller.h"
+        "ucsl/resources/converse-text/v6-forces.h"
         "ucsl/resources/converse-text/v6.h"
         "ucsl/resources/converse-meta/v2.h"
         "ucsl/resources/converse-project/v4.h"

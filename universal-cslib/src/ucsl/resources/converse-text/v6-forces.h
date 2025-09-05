@@ -2,18 +2,7 @@
 
 // reversed from files
 
-namespace ucsl::resources::converse_text::v6 {
-    struct AttributeEntry {
-        const char* type;
-        int unk0;
-        const char* value;
-    };
-
-    struct Attributes {
-        unsigned int attributeAmount;
-        AttributeEntry* attributes;
-    };
-
+namespace ucsl::resources::converse_text::v6_forces {
     struct Layout {
         const char* idName;
         int* unk0;
@@ -56,15 +45,17 @@ namespace ucsl::resources::converse_text::v6 {
         const char* key;
         FontLayout* fontLayout;
         wchar_t* text;
-        unsigned int textLength;
-        Attributes* attributes;
+    };
+
+    struct Sheet {
+        const char* sheetName;
+        unsigned short entryAmount;
+        Entry* entries;
     };
 
     struct CnvrsTextData {
         unsigned char version;
-        unsigned char sheetAmount; //unused
-        unsigned short entryAmount;
-        Entry* entries;
-        const char* sheetName;
+        unsigned char sheetAmount;
+        Sheet* sheets;
     };
 }

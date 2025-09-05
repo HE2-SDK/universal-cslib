@@ -12,7 +12,7 @@ namespace ucsl::resources::ntsp::v1{
 
     struct Block {
         void* data;
-        int64_t dataSize;
+        size_t dataSize;
     };
 
     struct NeedleTextureStreamingPackage {
@@ -20,7 +20,7 @@ namespace ucsl::resources::ntsp::v1{
         unsigned int version;
         unsigned int textureCount;
         unsigned int blockCount;
-        void* textureData;
+        size_t dataSize;
         
         //Texture textures[textureCount];
         //Block blocks[blockCount];
