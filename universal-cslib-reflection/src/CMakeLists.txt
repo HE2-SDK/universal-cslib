@@ -13,6 +13,7 @@ target_sources(universal-cslib-reflection
         "ucsl-reflection/game-interfaces/standalone/schema.h"
         "ucsl-reflection/reflections/resources/asm/v103-rangers.h"
         "ucsl-reflection/reflections/resources/asm/v103-miller.h"
+        "ucsl-reflection/reflections/resources/converse-text/v6-forces.h"
         "ucsl-reflection/reflections/resources/converse-text/v6.h"
         "ucsl-reflection/reflections/resources/converse-meta/v2.h"
         "ucsl-reflection/reflections/resources/converse-project/v4.h"
