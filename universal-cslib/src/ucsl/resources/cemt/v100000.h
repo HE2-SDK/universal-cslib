@@ -158,7 +158,8 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk1Data>* unk18;
 		float unk19;
 		float unk20;
-		char unk21[40];
+		char unk21[32];
+		void* texture;
 		int64_t unk22;
 	};
 
@@ -263,6 +264,39 @@ namespace ucsl::resources::cemt::v100000 {
 	};
 
 	struct EmitterParam {
+		enum class Shape : unsigned int {
+			POINT,
+			SPHERE,
+			DISC,
+			CYLINDER,
+			LINE,
+			TORUS,
+			CUBE,
+			FIXED = 8
+		};
+
+		enum class InheritTransformFlags : unsigned int {
+			TRANSLATION_RAW, // ignore world scale
+			ROTATION, // parent rotation
+			TRANSLATION, // add parent translation scaled by inheritRatio
+			TRANSLATION_RELATIVE, // apply relative translation
+			INHERIT_DIRECT // sets the matrix to parents
+		};
+
+		enum class UnkFlags : unsigned int {
+			UNK0, // sets Emitter::flags to |= 0x20
+			UNK1,
+			UNK2,
+			UNK3,
+			USE_TEXTURES
+		};
+
+		enum class CullMode : unsigned int {
+			UNK0,
+			UNK1,
+			UNK2
+		};
+
 		csl::math::Position position;
 		csl::math::Position rotation;
 		csl::math::Position scale;
@@ -270,24 +304,24 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk1Data>* unk1;
 		Collection<Unk2Data>* unk2;
 		Collection<Unk3Data>* unk3;
-		bool positionRandom;
-		csl::math::Position randomPosition;
+		Shape shape;
+		csl::math::Position randomTransform;
 		float spread;
 		float unkE4;
 		float spreadAngle;
-		unsigned char unkEC;
-		unsigned char unkED;
-		unsigned char unkEE; //makes the emitter last longer seemingly?
-		unsigned char unkEF;
+		bool useRadialDistribution;
+		bool consistentSpreadAngle;
+		bool useAngularSubdivisions;
+		unsigned char numSubDivisions;
 		Collection<Unk4Data>* unk4;
 		Collection<Unk5Data>* unk5;
 		Collection<Unk6Data>* unk6;
 		Collection<Unk7Data>* unk7;
-		unsigned int unk7a; //when 1, turns the emitter off
+		bool disabled;
 		float frequency;
-		float unk7c;
+		float frequencyRandomness;
 		float emitterCount;
-		float frequencyControlUnk; //seems to make a sinewave of some sort, the higher this is, the longer it takes to respawn this emitter, it keeps going from slow to fast back to slow, like a sinewave
+		float emitterCountRandomness;
 		int unk124;
 		float unk128;
 		float unk12C;
@@ -298,13 +332,16 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk8Data>* unk8;
 		uint32_t unk7f1;
 		float lifeEndTime;
-		float emitSpeed[6];
-		float emitVectorUnk;
+		float emitSpeed[3];
+		float unkShapeRelated0;
+		float shapeRadius;
+		float unkShapeRelated1;
+		float emitSize;
 		uint32_t gap4a;
 		float emitVector[3];
 		float unk4b;
 		float unk4c;
-		char gap4[0x14];
+		float unk4d;
 		Collection<Unk9Data>* unk9;
 		Collection<Unk10Data>* unk10;
 		Collection<Unk11Data>* unk11;
@@ -312,10 +349,15 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk13Data>* unk13;
 		Collection<Unk14Data>* unk14;
 		Collection<Unk15Data>* unk15;
-		uint32_t unk16;
+		int unk16;
+		unsigned int unkType;
+		CullMode cullMode;
+		ucsl::bits::Bitset<InheritTransformFlags> inheritTransformFlags;
+		float inheritRatio;
 		uint32_t unk17;
 		uint32_t unk18;
-		char gap5[0x10];
+		ucsl::bits::Bitset<UnkFlags> unkFlags;
+		char gap5[0x09];
 		unsigned char flags1;
 		char gap6[0x3B];
 		uint32_t randomSeed;
