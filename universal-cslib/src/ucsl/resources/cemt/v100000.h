@@ -44,7 +44,7 @@ namespace ucsl::resources::cemt::v100000 {
 	struct Unk17Data {};
 
 	struct ChildEffect {
-		uint8_t flags;
+		uint8_t flags; // 0x01 = animate
 		char gap[0x1F];
 		char name[128];
 		void* param; // EffectParam
@@ -52,57 +52,148 @@ namespace ucsl::resources::cemt::v100000 {
 
 	struct ModifierParam {
 		enum class Type : unsigned char {
-			GRAVITY_VECTOR,
-			GRAVITY_OTHER,
-			UNK0,
-			UNK1,
+			GRAVITY,
+			SPEED,
+			MAGNET,
+			NEWTON,
 			VORTEX,
-			UNK2,
-			UNK3,
-			UNK4,
-			UNK5,
+			SPIN,
+			SPIN2,
+			RANDOM,
+			TAIL,
 			FLUCTUATION,
+			UNK0
 		};
 
-		struct GravityVectorSettings {
+		enum class Origin : unsigned char {
+			WORLD,
+			EMISSION,
+			INHERIT,
+			UNK0 // uses option2
+		};
+
+		struct GravitySettings {
 			float scale;
-			float value[3];
+			csl::math::Position rotation;
+			bool usesDirection;
 		};
 
-		struct GravityOtherSettings {
-			float value;
+		struct SpeedSettings {
+			float scale;
+		};
+
+		struct MagnetSettings {
+			csl::math::Position magnetPoint;
+			float scale;
+		};
+
+		struct NewtonSettings {
+			csl::math::Position targetPoint;
+			float scale;
+			float maxDistance;
 		};
 
 		struct VortexSettings {
-			float unk1;
-			float unk2;
-			float unk3;
+			float max;
+			float min;
+			float radius;
+			csl::math::Position rotation;
+			bool usesDirection;
+		};
+
+		struct SpinSettings {
+			float scale;
+			csl::math::Position rotation;
+			bool usesDirection;
+		};
+
+		struct Spin2Settings {
+			float baseStrength;
+			float spinStrength;
+			float rotationAngle;
+			float axisFalloff;
+			csl::math::Position axisVector;
+			bool useEulerRotation;
+		};
+
+		struct RandomSettings {
+			enum class Flags : unsigned short {
+				RANDOMIZED_SCALE,
+				X,
+				Y,
+				Z
+			};
+
+			float scale;
+			float spreadScale;
+			short updateInterval;
+			ucsl::bits::Bitset<Flags> flags;
+			bool normalizedSpreadVector;
+			bool randomPerAxis;
+		};
+
+		struct TailSettings {
+			float multiplier;
 		};
 
 		struct FluctuationSettings {
-			bool unk0;
-			bool unk1;
-			unsigned char unk2;
-			float unk3;
-			float unk4;
-			float unk5;
-			float unk6;
-			float unk7;
+			enum class WaveformType : unsigned char {
+				TRIANGLE,
+				INVERSE_TRIANGLE,
+				SAW,
+				STEP,
+				SINE
+			};
+
+			WaveformType waveformType;
+			float baseOffset;
+			int axisFlags;
 		};
 
 		union Settings {
-			GravityVectorSettings gravityVector;
-			GravityOtherSettings gravityOther;
+			GravitySettings gravity;
+			SpeedSettings speed;
+			MagnetSettings magnet;
+			NewtonSettings newton;
 			VortexSettings vortex;
+			SpinSettings spin;
+			Spin2Settings spin2;
+			RandomSettings random;
+			TailSettings tail;
 			FluctuationSettings fluctuation;
 			unsigned int maxSize[8];
 		};
 
 		bool enabled;
 		Type type;
-		bool option1;
-		bool option2;
+		Origin origin;
+		char option2;
 		Settings settings;
+	};
+
+	struct AnimationKeyframeParam {
+		short frame;
+		short unk0;
+		float in[2];
+		float out[2];
+	};
+
+	struct AnimationTrackParam {
+		char index;
+		char unk0;
+		short frameCount;
+		// AnimationKeyframeParam keyframes[frameCount];
+	};
+
+	struct AnimationParam {
+		char flags;
+		char unk1;
+		char unk2;
+		bool durationEnabled;
+		int loopCount;
+		short totalFrameCount;
+		short activeTrackCount;
+		AnimationTrackParam* tracks[4];
 	};
 
 	struct TextureParam {
@@ -158,7 +249,7 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk1Data>* unk18;
 		float unk19;
 		float unk20;
-		char unk21[32];
+		char unk21[40];
 		void* texture;
 		int64_t unk22;
 	};
@@ -183,8 +274,8 @@ namespace ucsl::resources::cemt::v100000 {
 		float unk6;
 		float unk8;
 		char gap3[0x8];
-		void* unk3;
-		char gap4[0x8];
+		AnimationParam* colorAnimation;
+		AnimationParam* alphaAnimation;
 		void* unk4;
 		void* unk7;
 		void* unk5;
@@ -221,7 +312,7 @@ namespace ucsl::resources::cemt::v100000 {
 		unsigned int unkCount3;
 		Table tables[2];
 		float fps;
-		float unk19a23;
+		float fpsJitter;
 		unsigned int unk18a6;
 		unsigned int unk18a8;
 		unsigned int unk18a1;
@@ -233,7 +324,7 @@ namespace ucsl::resources::cemt::v100000 {
 		char gap7a0[0x100];
 		unsigned short particleTypeOrSomething; // if 2 or 3 it loads particleInfo1, if 4 it loads particleInfo1, particleInfo2, particleInfo3, see 0x140FDC9B8 in rangers 1.42
 		unsigned int particleInfo1;
-		unsigned int particleInfo2;
+		unsigned int particleInfo2; // changes how the element is rotated in regards to a modifier
 		unsigned char unk18a3;
 		unsigned char particleInfo3;
 		char gap7[0x16];
@@ -241,8 +332,8 @@ namespace ucsl::resources::cemt::v100000 {
 		unsigned int textureCount;
 		ChildEffect childEffects[16];
 		ModifierParam modifiers[8];
-		char gap7a[0x140];
-		unsigned int flags3;
+		AnimationParam* modifierAnimations[5][8];
+		unsigned int flags3; // 0x1000 = use -1 or fps variables
 		char gap7b[0x44];
 		unsigned int flags4; // 0x1 = is gpu rendering?
 		char vectorFieldName[128];
@@ -307,10 +398,10 @@ namespace ucsl::resources::cemt::v100000 {
 		Shape shape;
 		csl::math::Position randomTransform;
 		float spread;
-		float unkE4;
-		float spreadAngle;
+		float startAngle;
+		float endAngle;
 		bool useRadialDistribution;
-		bool consistentSpreadAngle;
+		bool consistentAngle;
 		bool useAngularSubdivisions;
 		unsigned char numSubDivisions;
 		Collection<Unk4Data>* unk4;
@@ -319,9 +410,9 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk7Data>* unk7;
 		bool disabled;
 		float frequency;
-		float frequencyRandomness;
+		float frequencyJitter;
 		float emitterCount;
-		float emitterCountRandomness;
+		float emitterCountJitter;
 		int unk124;
 		float unk128;
 		float unk12C;
@@ -332,15 +423,17 @@ namespace ucsl::resources::cemt::v100000 {
 		Collection<Unk8Data>* unk8;
 		uint32_t unk7f1;
 		float lifeEndTime;
-		float emitSpeed[3];
-		float unkShapeRelated0;
+		float accelarationMultiplier;
+		float accelarationNormalMultiplier;
+		float initialSpeed;
+		float velocityMultiplier;
 		float shapeRadius;
-		float unkShapeRelated1;
+		float velocityScale;
 		float emitSize;
-		uint32_t gap4a;
-		float emitVector[3];
-		float unk4b;
-		float unk4c;
+		bool useEmitVector;
+		csl::math::Position emitVector;
+		float emitVectorJitter;
+		float directionJitter;
 		float unk4d;
 		Collection<Unk9Data>* unk9;
 		Collection<Unk10Data>* unk10;
@@ -357,11 +450,18 @@ namespace ucsl::resources::cemt::v100000 {
 		uint32_t unk17;
 		uint32_t unk18;
 		ucsl::bits::Bitset<UnkFlags> unkFlags;
-		char gap5[0x09];
-		unsigned char flags1;
-		char gap6[0x3B];
+		char gap5[0x8];
+		float unkFloat0;
+		float unkFloat0Jitter;
+		float unkFloat1;
+		float unkFloat1Jitter;
+		char gap6b[0x2D];
 		uint32_t randomSeed;
-		char gap6aa1[0x4C];
+		char gap6aa1[48];
+		unsigned int unkType1; //has six values;
+		char gap6aa1b[8];
+		unsigned int unkType2; //has six values;
+		char gap6aa1bb[12];
 		ElementParam elementParam;
 	};
 
