@@ -43,9 +43,40 @@ namespace ucsl::resources::cemt::v100000 {
 
 	struct Unk17Data {};
 
+	struct AnimationKeyframeParam {
+		short frame;
+		short unk0;
+		float in[2];
+		float out[2];
+	};
+
+	struct AnimationTrackParam {
+		char index;
+		char unk0;
+		short frameCount;
+		// AnimationKeyframeParam keyframes[frameCount];
+	};
+
+	struct AnimationParam {
+		char flags;
+		char unk1;
+		char unk2;
+		bool durationEnabled;
+		int loopCount;
+		short totalFrameCount;
+		short activeTrackCount;
+		AnimationTrackParam* tracks[4];
+	};
+
 	struct ChildEffect {
 		uint8_t flags; // 0x01 = animate
-		char gap[0x1F];
+		char unkType; // 0x01 = affected by fluctuation, 0x02 = related to color?
+		float unk0;
+		float unk1;
+		float unk2;
+		float unk3;
+		float unk4;
+		AnimationParam* unkAnim;
 		char name[128];
 		void* param; // EffectParam
 	};
@@ -171,34 +202,9 @@ namespace ucsl::resources::cemt::v100000 {
 		Settings settings;
 	};
 
-	struct AnimationKeyframeParam {
-		short frame;
-		short unk0;
-		float in[2];
-		float out[2];
-	};
-
-	struct AnimationTrackParam {
-		char index;
-		char unk0;
-		short frameCount;
-		// AnimationKeyframeParam keyframes[frameCount];
-	};
-
-	struct AnimationParam {
-		char flags;
-		char unk1;
-		char unk2;
-		bool durationEnabled;
-		int loopCount;
-		short totalFrameCount;
-		short activeTrackCount;
-		AnimationTrackParam* tracks[4];
-	};
-
 	struct TextureParam {
 		enum class UVFlags {
-			UNK0, //0x01
+			ANIMATED, //0x01
 			UNK1, //0x02
 			UNK2, //0x04
 			UNK3, //0x08
@@ -228,8 +234,7 @@ namespace ucsl::resources::cemt::v100000 {
 		short unk6;
 		short unk7;
 		int unk8;
-		int unk9;
-		int unk10;
+		AnimationParam* unkAnim;
 		float scrollColorX;
 		float scrollColorY;
 		float scrollColorRandomX;
@@ -302,21 +307,30 @@ namespace ucsl::resources::cemt::v100000 {
 	struct ElementParam {
 		float initialRotation[6];
 		unsigned int unk18a0;
-		char gap6aa2[0x20];
+		char gap6aa2[24];
+		unsigned int unkFlags34;
+		char gap6aa2b[4];
 		float angularVelocity[6];
 		unsigned int unk18a01;
-		float emitSpeed2[4];
-		uint64_t unk18a02;
-		unsigned int unkCount2;
-		char gap6a0[0x18];
-		unsigned int unkCount3;
+		float sizeX;
+		float sizeXJitter;
+		float sizeY;
+		float sizeYJitter;
+		float sizeZ;
+		float sizeZJitter;
+		unsigned int sizeFlags; //controls whetever jiggle should be used
+		float scaleX;
+		float scaleXJitter;
+		float scaleY;
+		float scaleYJitter;
+		float scaleZ;
+		float scaleZJitter;
+		unsigned int scaleFlags; //controls whetever jiggle should be used
 		Table tables[2];
 		float fps;
 		float fpsJitter;
-		unsigned int unk18a6;
-		unsigned int unk18a8;
-		unsigned int unk18a1;
-		float unk18a2;
+		AnimationParam* unkAnim18a6;
+		AnimationParam* unkAnim18a1;
 		char gap6aa[0x14];
 		bool unk18a;
 		char gap6b[0x81];
@@ -333,8 +347,10 @@ namespace ucsl::resources::cemt::v100000 {
 		ChildEffect childEffects[16];
 		ModifierParam modifiers[8];
 		AnimationParam* modifierAnimations[5][8];
-		unsigned int flags3; // 0x1000 = use -1 or fps variables
-		char gap7b[0x44];
+		unsigned int flags3; // 0x01 = has childeffects, 0x1000 = use -1 or fps variables
+		char gap7b[0x4];
+		AnimationParam* unkAnim7bc;
+		char gap7bb[0x38];
 		unsigned int flags4; // 0x1 = is gpu rendering?
 		char vectorFieldName[128];
 		math::Position vectorFieldSize;
