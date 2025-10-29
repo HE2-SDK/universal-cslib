@@ -131,7 +131,13 @@ namespace ucsl::rfl {
 			const RflClass* GetClass() const { return classDef; }
 			const RflClassEnum* GetEnum() const { return enumDef; }
 			Type GetType() const { return type; }
-			Type GetSubType() const { return subType; }
+			Type GetSubType() const {
+				if constexpr (TypeSet::template supports_primitive<objectids::ObjectIdV1>) {
+					return GetType() == Type::OLD_ARRAY && subType == Type::UINT32 ? Type::OBJECT_ID_V1 : subType;
+				}
+				else
+					return subType;
+			}
 			unsigned int GetArrayLength() const { return arrayLength; }
 			unsigned int GetFlags() const { return flags; }
 			unsigned int GetOffset() const { return offset; }
