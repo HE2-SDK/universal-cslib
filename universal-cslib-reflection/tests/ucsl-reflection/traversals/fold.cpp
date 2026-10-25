@@ -3,7 +3,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <ucsl-reflection/accessors/binary.h>
 #include <ucsl-reflection/providers/simplerfl.h>
-#include <ucsl-reflection/bound-reflection.h>
 #include <ucsl-reflection/game-interfaces/standalone/game-interface.h>
 #include <ucsl-reflection/traversals/fold.h>
 #include <ucsl-reflection/reflections/basic-types.h>
@@ -306,7 +305,7 @@ TEST_CASE( "null traversal", "traversals/fold") {
 	t1.tarr.push_back(2);
 	t1.tarr.push_back(3);
 
-	providers::BoundProvider::RootType refl{ providers::simplerfl<GI>::Type<Test1>{} };
+	providers::simplerfl<GI>::RootType<Test1> refl{ };
 	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc1{ t1, refl };
 	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc2{ t1, refl };
 	traversals::traversal<Null> t{};

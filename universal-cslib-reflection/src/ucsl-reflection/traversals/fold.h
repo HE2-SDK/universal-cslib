@@ -10,10 +10,10 @@ namespace ucsl::reflection::traversals {
 	//	
 	//}
 
-	template<typename Algorithm, typename = std::make_index_sequence<Algorithm::arity>>
+	template<typename Algorithm, typename AddrType = size_t, typename = std::make_index_sequence<Algorithm::arity>>
 	class traversal;
-	template<typename Algorithm, std::size_t... S>
-	class traversal<Algorithm, std::index_sequence<S...>> {
+	template<typename Algorithm, typename AddrType, std::size_t... S>
+	class traversal<Algorithm, AddrType, std::index_sequence<S...>> {
 		template<std::size_t, typename T> using Spread = T;
 
 		//using Objs = Spread<S, opaque_obj&>;
@@ -95,7 +95,7 @@ namespace ucsl::reflection::traversals {
 			if (base.has_value())
 				result |= process_base_struct(base.value(), objs...);
 
-			refl.visit_fields([&](auto field) { result |= process_field(field, objs...); });
+			refl.template visit_fields<AddrType>(std::get<0>(std::tuple{ objs... }), [&](auto field) { result |= process_field(field, objs...); });
 
 			return result;
 		}
