@@ -1,115 +1,127 @@
 #pragma once
 #include <ucsl/strings/variable-string.h>
-#include <ucsl-reflection/opaque.h>
+#include <ucsl-reflection/accessors/types.h>
 #include <ucsl-reflection/traversals/types.h>
 #include <ucsl-reflection/util/memory.h>
 
 namespace ucsl::reflection::algorithms {
-	using namespace ucsl::reflection::traversals;
-
 	template<typename GameInterface>
 	class Copy {
 	public:
-		constexpr static size_t arity = 2;
-		typedef int result_type;
-
-		template<typename T>
-		result_type visit_primitive(T& obj1, T& obj2, const PrimitiveInfo<T>&info) {
+		static inline void process_primitive_data(auto& obj1, const auto& obj2) {
 			obj1 = obj2;
-			return 0;
 		}
 
-		result_type visit_primitive(ucsl::strings::VariableString& obj1, ucsl::strings::VariableString& obj2, const PrimitiveInfo<ucsl::strings::VariableString>& info) {
+		static inline void process_primitive_data(ucsl::strings::VariableString& obj1, const ucsl::strings::VariableString& obj2) {
 			if (obj1.GetAllocator())
 				obj1.Set(obj2.c_str());
 			else
 				obj1.Set(obj2.c_str(), -1, GameInterface::AllocatorSystem::get_allocator());
 
-			return 0;
 		}
 
-		result_type visit_primitive(const char*& obj1, const char*& obj2, const PrimitiveInfo<const char*>& info) {
+		static inline void process_primitive_data(const char*& obj1, const char* const& obj2) {
 			assert(false && "copy currently doesn't handle pointers");
-			return 0;
 		}
 
-		template<typename T, typename O>
-		result_type visit_enum(T& obj1, T& obj2, const EnumInfo<O>& info) {
-			return visit_primitive(obj1, obj2, PrimitiveInfo<T>{});
+		static inline void process_primitive(accessors::PrimitiveAccessor auto& obj1, const accessors::PrimitiveAccessor auto& obj2) {
+			obj1.visit([&](auto& obj1Data) {
+				obj2.visit([&](const auto& obj2Data) {
+					if constexpr (std::is_same_v<std::decay_t<decltype(obj1Data.refl)>, std::decay_t<decltype(obj2Data.refl)>>)
+						process_primitive_data(*obj1Data.value, *obj2Data.value);
+				});
+			});
 		}
 
-		template<typename T, typename O>
-		result_type visit_flags(T& obj1, T& obj2, const FlagsInfo<O>& info) {
-			return visit_primitive(obj1, obj2, PrimitiveInfo<T>{});
+		static inline void process_enum(auto& obj1, const auto& obj2) {
+			obj1 = obj2;
 		}
 
-		template<typename F, typename A, typename C, typename D>
-		result_type visit_array(A& arr1, A& arr2, const ArrayInfo& info1, const ArrayInfo& info2, C c, D d, F f) {
+		static inline void process_bitfield(auto& obj1, const auto& obj2) {
+			obj1.visit([&](auto& obj1Underlying) {
+				obj2.visit([&](const auto& obj2Underlying) {
+					if constexpr (std::is_same_v<std::decay_t<decltype(obj1Underlying.refl)>, std::decay_t<decltype(obj2Underlying.refl)>>)
+						*obj1Underlying.value = *obj2Underlying.value;
+				});
+			});
+		}
+
+		static inline void process_array(auto& arr1, const auto& arr2) {
 			arr1.clear();
 
 			for (auto item : arr2) {
-				arr1.emplace_back();
-				f(arr1[arr1.size() - 1], item);
-			}
+				auto item1 = arr1.emplace_back();
 
-			return 0;
+				process_type(item1, item);
+			}
 		}
 
-		template<typename F, typename A, typename C, typename D>
-		result_type visit_tarray(A& arr1, A& arr2, const ArrayInfo& info1, const ArrayInfo& info2, C c, D d, F f) {
+		static inline void process_tarray(auto& arr1, const auto& arr2) {
 			arr1.clear();
 
 			for (auto item : arr2) {
-				arr1.emplace_back();
-				f(arr1[arr1.size() - 1], item);
+				auto item1 = arr1.emplace_back();
+
+				process_type(item1, item);
 			}
-
-			return 0;
 		}
 
-		template<typename F>
-		result_type visit_carray(opaque_obj* obj1, opaque_obj* obj2, const CArrayInfo& info1, const CArrayInfo& info2, F f) {
-			assert(info1.size == info2.size && info1.stride == info2.stride && "carray copy currently expects equal size arrays");
+		static inline void process_carray(accessors::CArrayAccessor auto& obj1, const accessors::CArrayAccessor auto& obj2) {
+			assert(obj1.size() == obj2.size() && "carray copy currently expects equal size arrays");
 
-			for (size_t i = 0; i < info1.size; i++)
-				f(*util::addptr(obj1, i * info1.stride), *util::addptr(obj2, i * info1.stride));
-			return 0;
+			for (size_t i = 0; i < obj1.size(); i++) {
+				auto item1 = obj1[i];
+
+				process_type(item1, obj2[i]);
+			}
 		}
 
-		template<typename F, typename A1, typename S1, typename A2, typename S2>
-		result_type visit_pointer(opaque_obj*& obj1, opaque_obj*& obj2, const PointerInfo<A1, S1>& info1, const PointerInfo<A2, S2>& info2, F f) {
+		static inline void process_pointer(accessors::PointerAccessor auto& obj1, const accessors::PointerAccessor auto& obj2) {
 			assert(false && "copy currently doesn't handle pointers");
-			return 0;
 		}
 
-		template<typename F>
-		result_type visit_union(opaque_obj& obj1, opaque_obj& obj2, const UnionInfo& info1, const UnionInfo& info2, F f) {
-			return f(obj1, obj2);
+		static inline void process_union(accessors::UnionAccessor auto& obj1, const accessors::UnionAccessor auto& obj2) {
+			obj1.refl.visit_current_field([&](const auto& fieldRefl) {
+				auto field = obj1[fieldRefl];
+
+				process_type(field, obj2[fieldRefl]);
+			});
 		}
 
-		template<typename F>
-		result_type visit_type(opaque_obj& obj1, opaque_obj& obj2, const TypeInfo& info1, const TypeInfo& info2, F f) {
-			return f(obj1, obj2);
+		static inline void process_fields(accessors::StructureAccessor auto& obj1, const accessors::StructureAccessor auto& obj2) {
+			auto base1 = obj1.get_base();
+			auto base2 = obj2.get_base();
+
+			if (base1.has_value() && base2.has_value())
+				process_fields(base1.value(), base2.value());
+
+			obj1.refl.visit_fields<size_t>(obj1, [&](const auto& fieldRefl) {
+				auto field = obj1[fieldRefl];
+
+				process_type(field, obj2[fieldRefl]);
+			});
 		}
 
-		template<typename F>
-		result_type visit_field(opaque_obj& obj1, opaque_obj& obj2, const FieldInfo& info, F f) {
-			return f(obj1, obj2);
+		static inline void process_struct(accessors::StructureAccessor auto& obj1, const accessors::StructureAccessor auto& obj2) {
+			process_fields(obj1, obj2);
 		}
 
-		template<typename F>
-		result_type visit_base_struct(opaque_obj& obj1, opaque_obj& obj2, const StructureInfo& info, F f) {
-			return f(obj1, obj2);
-		}
-
-		template<typename F>
-		result_type visit_struct(opaque_obj& obj1, opaque_obj& obj2, const StructureInfo& info, F f) {
-			return f(obj1, obj2);
-		}
-
-		template<typename F>
-		result_type visit_root(opaque_obj& obj1, opaque_obj& obj2, const RootInfo& info1, const RootInfo& info2, F f) {
-			return f(obj1, obj2);
+		static inline void process_type(accessors::ValueAccessor auto& obj1, const accessors::ValueAccessor auto& obj2) {
+			obj1.visit([&](auto& v1) {
+				obj2.visit([&](const auto& v2) {
+					if constexpr (!std::is_same_v<std::decay_t<decltype(v1.refl)>, std::decay_t<decltype(v2.refl)>>) return;
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::PRIMITIVE) process_primitive(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::ENUM) process_enum(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::BITFIELD) process_bitfield(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::ARRAY) process_array(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::TARRAY) process_tarray(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::CARRAY) process_carray(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::POINTER) process_pointer(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::UNION) process_union(v1, v2);
+					else if constexpr (decltype(v1.refl)::kind == providers::TypeKind::STRUCTURE) process_struct(v1, v2);
+					else static_assert(false, "invalid type kind");
+				});
+			});
 		}
 	};
 }

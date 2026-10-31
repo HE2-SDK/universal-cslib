@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <simple-reflection/simple-reflection.h>
 #include <ucsl/containers/arrays/array.h>
 #include <ucsl/containers/arrays/tarray.h>
 #include <ucsl/rfl/rflclass.h>

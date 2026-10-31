@@ -33,14 +33,10 @@ namespace ucsl::reflection::traversals {
 			return algorithm.visit_enum(objs...);
 		}
 
-		//template<typename Refl, typename... Obj>
-		//typename Algorithm::result_type process_flags(Obj&... objs, bool erased, Refl refl) {
-		//	return refl.visit([&](auto repr) {
-		//		using Repr = typename decltype(repr)::repr;
-
-		//		return algorithm.visit_flags(objs.as<Repr>(objs)..., FlagsInfo{ refl.get_values() });
-		//	});
-		//}
+		template<typename Refl, typename... Obj>
+		typename Algorithm::result_type process_bitfield(Refl refl, Obj... objs) {
+			return algorithm.visit_bitfield(objs...);
+		}
 
 		template<typename Refl, typename... Obj>
 		typename Algorithm::result_type process_array(Refl refl, Obj... objs) {
@@ -60,7 +56,7 @@ namespace ucsl::reflection::traversals {
 		typename Algorithm::result_type process_pointer(Refl refl, Obj... objs) {
 			auto target = refl.get_target_type();
 
-			return algorithm.visit_pointer(objs..., [&, target](decltype(objs.get().value())&... targets) { return process_type(target, targets...); });
+			return algorithm.visit_pointer(objs..., [&, target](decltype(*objs)&... targets) { return process_type(target, targets...); });
 		}
 
 		template<typename Refl, typename... Obj>
@@ -114,11 +110,11 @@ namespace ucsl::reflection::traversals {
 
 		template<typename Refl, typename... Obj>
 		typename Algorithm::result_type process_type(Refl refl, Obj... objs) {
-			return algorithm.visit_type(objs..., [&, refl](Obj... objs) {
-				return refl.visit([&, refl](auto r) {
+			return algorithm.visit_type(objs..., [&, refl](Obj... objs) -> typename Algorithm::result_type {
+				return refl.visit([&, refl](auto r) -> typename Algorithm::result_type {
 					if constexpr (decltype(r)::kind == providers::TypeKind::PRIMITIVE) return process_primitive(r, objs.as_primitive()...);
 					else if constexpr (decltype(r)::kind == providers::TypeKind::ENUM) return process_enum(r, objs.as_enum()...);
-					//else if constexpr (decltype(r)::kind == providers::TypeKind::FLAGS) return process_flags(r, objs.as_flags()...);
+					else if constexpr (decltype(r)::kind == providers::TypeKind::BITFIELD) return process_bitfield(r, objs.as_bitfield()...);
 					else if constexpr (decltype(r)::kind == providers::TypeKind::ARRAY) return process_array(r, objs.as_array()...);
 					else if constexpr (decltype(r)::kind == providers::TypeKind::TARRAY) return process_tarray(r, objs.as_tarray()...);
 					else if constexpr (decltype(r)::kind == providers::TypeKind::POINTER) return process_pointer(r, objs.as_pointer()...);

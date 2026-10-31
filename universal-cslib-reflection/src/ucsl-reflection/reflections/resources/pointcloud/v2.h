@@ -1,4 +1,7 @@
 #pragma once
+#include <simple-reflection/simple-reflection.h>
+#include <ucsl-reflection/operators.h>
+#include <ucsl-reflection/reflections/basic-types.h>
 #include <ucsl/resources/pointcloud/v2.h>
 
 namespace ucsl::resources::pointcloud::v2::reflections {

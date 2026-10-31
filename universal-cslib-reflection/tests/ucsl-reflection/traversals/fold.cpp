@@ -82,6 +82,12 @@ enum class TestEnum1Repr : unsigned short {
 	OPT2,
 };
 
+enum class TestEnum2Repr : unsigned char {
+	OPT1,
+	OPT2,
+	OPT3,
+};
+
 struct Test1Repr {
 	bool b;
 	unsigned char u8;
@@ -93,6 +99,7 @@ struct Test1Repr {
 	unsigned long long u64;
 	long long s64;
 	float f32;
+	unsigned long bf;
 	ucsl::math::Vector2 v2;
 	ucsl::math::Vector3 v3;
 	ucsl::math::Vector4 v4;
@@ -121,6 +128,12 @@ using TestEnum1 = enumeration<TestEnum1Repr, "TestEnum1", unsigned short,
 	option<"OPT2">
 >;
 
+using TestEnum2 = enumeration<TestEnum2Repr, "TestEnum2", unsigned char,
+	option<"OPT1">,
+	option<"OPT2">,
+	option<"OPT3">
+>;
+
 using Test1 = structure<Test1Repr, "Test1", void,
 	field<bool, "b">,
 	field<unsigned char, "u8">,
@@ -132,6 +145,10 @@ using Test1 = structure<Test1Repr, "Test1", void,
 	field<unsigned long long, "u64">,
 	field<long long, "s64">,
 	field<float, "f32">,
+	field<bitfield<unsigned long,
+		component<bool, "cmp1", 0, 1>,
+		component<TestEnum2, "cmp2", 1, 3>
+	>, "bf">,
 	field<ucsl::math::Vector2, "v2">,
 	field<ucsl::math::Vector3, "v3">,
 	field<ucsl::math::Vector4, "v4">,
@@ -193,22 +210,67 @@ struct Null {
 		result_type(const result_type& other) : v{ other.v } {}
 		result_type& operator|=(const result_type& other) { v += other.v; return *this; }
 	};
+	template<typename T, typename R> void print_enum(const R& r, const T& v) {
+		for (auto& option : r.get_options()) {
+			if (option.GetIndex() == v) {
+				std::cout << option.GetEnglishName();
+				return;
+			}
+		}
+		std::cout << v;
+	}
+	template<typename T1, typename T2, typename R> void print_enums(const R& r, const T1& v1, const T2& v2) {
+		std::cout << "obj1: ";
+		print_enum(r, v1);
+		std::cout << ", obj2: ";
+		print_enum(r, v2);
+		std::cout << std::endl;
+	}
+	template<typename T> result_type visit_primitive_data(const T& obj1Data, const T& obj2Data) {
+		if constexpr (std::is_same_v<T, unsigned char> || std::is_same_v<T, char>)
+			std::cout << "obj1: " << static_cast<int>(obj1Data) << ", obj2: " << static_cast<int>(obj2Data) << std::endl;
+		else
+			std::cout << "obj1: " << obj1Data << ", obj2: " << obj2Data << std::endl;
+		return 1;
+	}
 	template<accessors::PrimitiveAccessor T> result_type visit_primitive(T obj1, T obj2) {
 		return obj1.visit([&](auto obj1Data) {
 			return obj2.visit([&](auto obj2Data) {
-				if constexpr (std::is_same_v<typename decltype(obj1Data.refl)::repr, unsigned char> || std::is_same_v<typename decltype(obj1Data.refl)::repr, char>)
-					std::cout << "obj1: " << static_cast<int>(obj1Data) << ", obj2: " << static_cast<int>(obj2Data) << std::endl;
-				else
-					std::cout << "obj1: " << obj1Data << ", obj2: " << obj2Data << std::endl;
-				return 1;
+				return visit_primitive_data(static_cast<decltype(obj1Data.refl)::repr>(obj1Data), static_cast<decltype(obj2Data.refl)::repr>(obj2Data));
 			});
 		});
 	}
 	template<typename T> result_type visit_enum(T obj1, T obj2) {
-		std::cout << "obj1: " << obj1 << ", obj2: " << obj2 << std::endl;
+		print_enums(obj1.refl, obj1, obj2);
 		return 1;
 	}
-	//template<typename T> result_type visit_flags(T obj1, T obj2) { return 0; }
+	template<typename T> result_type visit_bitfield(T obj1, T obj2) {
+		return obj1.visit([&](auto obj1Underlying) {
+			return obj2.visit([&](auto obj2Underlying) {
+				typename decltype(obj1Underlying.refl)::repr bitfield1{ obj1Underlying };
+				typename decltype(obj2Underlying.refl)::repr bitfield2{ obj2Underlying };
+
+				obj1.refl.visit_components([&](const auto& component) {
+					size_t mask{ (1 << component.get_width()) - 1 };
+					size_t value1{ (bitfield1 >> component.get_offset()) & mask };
+					size_t value2{ (bitfield2 >> component.get_offset()) & mask };
+
+					component.get_type().visit([&](const auto& r) {
+						if constexpr (std::decay_t<decltype(r)>::kind == ucsl::reflection::providers::TypeKind::PRIMITIVE)
+							return r.visit([&](const auto& pd) {
+								return visit_primitive_data(*reinterpret_cast<typename std::decay_t<decltype(pd)>::repr*>(&value1), *reinterpret_cast<typename std::decay_t<decltype(pd)>::repr*>(&value2));
+							});
+						else if constexpr (std::decay_t<decltype(r)>::kind == ucsl::reflection::providers::TypeKind::ENUM) {
+							print_enums(r, value1, value2);
+						}
+						else static_assert(false, "invalid type kind");
+					});
+				});
+
+				return 1;
+			});
+		});
+	}
 	template<typename T, typename F> result_type visit_array(T obj1, T obj2, F f) {
 		result_type res{};
 		size_t size = std::min(obj1.size(), obj2.size());
@@ -236,14 +298,14 @@ struct Null {
 		return res;
 	}
 	template<accessors::PointerAccessor T, typename F> result_type visit_pointer(T obj1, T obj2, F f) {
-		auto obj1Target = obj1.get().value();
-		auto obj2Target = obj2.get().value();
+		auto obj1Target = *obj1;
+		auto obj2Target = *obj2;
 
 		return f(obj1Target, obj2Target);
 	}
 	template<accessors::CArrayAccessor T, typename F> result_type visit_carray(T obj1, T obj2, F f) {
 		result_type res{};
-		for (size_t i = 0; i < obj1.get_length(); i++) {
+		for (size_t i = 0; i < obj1.size(); i++) {
 			auto obj1Item = obj1[i];
 			auto obj2Item = obj2[i];
 
@@ -276,6 +338,7 @@ TEST_CASE( "null traversal", "traversals/fold") {
 		.u64 = 7,
 		.s64 = 8,
 		.f32 = 9.0,
+		.bf = 0b101,
 		.v2 = { 1.0, 2.0 },
 		.v3 = { 1.0, 2.0, 3.0 },
 		.v4 = { 1.0, 2.0, 3.0, 4.0 },
@@ -305,9 +368,9 @@ TEST_CASE( "null traversal", "traversals/fold") {
 	t1.tarr.push_back(2);
 	t1.tarr.push_back(3);
 
-	providers::simplerfl<GI>::RootType<Test1> refl{ };
-	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc1{ t1, refl };
-	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc2{ t1, refl };
+	providers::rflclass<GI>::RootType refl{ nullptr };
+	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc1{ &t1, refl };
+	accessors::binary<GI>::ValueAccessor<decltype(refl)> acc2{ &t1, refl };
 	traversals::traversal<Null> t{};
 
 	REQUIRE(t.call(refl, acc1, acc2).v == 74);

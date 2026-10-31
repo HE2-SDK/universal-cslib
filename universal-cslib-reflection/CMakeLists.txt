@@ -7,6 +7,7 @@ FetchContent_MakeAvailable(Catch2 MoreConcepts)
 
 add_library(universal-cslib-reflection INTERFACE)
 target_compile_features(universal-cslib-reflection INTERFACE cxx_std_20)
+target_compile_options(universal-cslib-reflection INTERFACE /clang:-ftemplate-backtrace-limit=0 /clang:-fno-rtti)
 target_link_libraries(universal-cslib-reflection INTERFACE universal-cslib simple-reflection more_concepts)
 add_subdirectory(src)
 
