@@ -1,4 +1,5 @@
 #pragma once
+#include <type_traits>
 
 namespace ucsl::bits {
 #ifdef EXPORTING_TYPES

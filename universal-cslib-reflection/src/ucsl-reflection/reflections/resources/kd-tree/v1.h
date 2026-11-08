@@ -29,11 +29,11 @@ namespace ucsl::resources::kd_tree::v1::reflections {
 	using ResKdTreeData = structure<impl::ResKdTreeData, "ResKdTreeData", void,
 		field<int, "depth">,
 		field<int, "nodeCount">,
-		field<dynamic_carray<ResKdTreeNodeData, impl::ResKdTreeData, [](const impl::ResKdTreeData& path) -> size_t { return path.nodeCount; }>*, "nodes">,
+		field<dynamic_carray<ResKdTreeNodeData, field_resolver<int, "nodeCount">>*, "nodes">,
 		field<int, "leafCount">,
-		field<dynamic_carray<ResKdTreeLeafNodeData, impl::ResKdTreeData, [](const impl::ResKdTreeData& path) -> size_t { return path.leafCount; }>*, "leaves">,
+		field<dynamic_carray<ResKdTreeLeafNodeData, field_resolver<int, "leafCount">>*, "leaves">,
 		field<int, "objectCount">,
-		field<dynamic_carray<unsigned int, impl::ResKdTreeData, [](const impl::ResKdTreeData& path) -> size_t { return path.objectCount; }>*, "objects">
+		field<dynamic_carray<unsigned int, field_resolver<int, "objectCount">>*, "objects">
 	>;
 }
 

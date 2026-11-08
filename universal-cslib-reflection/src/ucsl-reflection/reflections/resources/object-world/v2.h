@@ -21,7 +21,7 @@ namespace ucsl::resources::object_world::v2::reflections {
         field<erased<unsigned long long>, "unk1">,
         field<const char*, "type">,
         field<unsigned long long, "size">,
-        field<component_data_rflclass<impl::ComponentData, [](const impl::ComponentData& parent) -> const char* { return parent.type; }>*, "data" >
+        field<component_data_rflclass<field_resolver<std::string, "type">>*, "data" >
     >;
 
     template<typename AllocatorSystem>
@@ -34,7 +34,7 @@ namespace ucsl::resources::object_world::v2::reflections {
         field<ObjectTransformData, "transform">,
         field<ObjectTransformData, "localTransform">,
         field<containers::arrays::Array<ComponentData*, AllocatorSystem>, "componentData">,
-        field<spawner_data_rflclass<impl::ObjectData<AllocatorSystem>, [](const impl::ObjectData<AllocatorSystem>& parent) -> const char* { return parent.gameObjectClass; }>*, "spawnerData" >
+        field<spawner_data_rflclass<field_resolver<std::string, "gameObjectClass">>*, "spawnerData" >
     >;
 
     template<typename AllocatorSystem>

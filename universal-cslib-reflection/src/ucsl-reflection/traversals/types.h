@@ -71,4 +71,11 @@ namespace ucsl::reflection::traversals {
 	struct FlagsInfo {
 		const T& flags{};
 	};
+
+	//template<typename T>
+	//concept Algorithm = requires (T t) {
+	//	typename T::result_type;
+
+	//	{ t.visit_primitive()
+	//}
 }

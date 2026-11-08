@@ -24,10 +24,10 @@ namespace ucsl::resources::nxs::v1::reflections {
 		field<size_t, "mesh1Size">,
 		field<size_t, "mesh2Size">,
 		field<size_t, "mesh3Size">,
-		field<dynamic_carray<MaterialData, impl::NXSData, [](const impl::NXSData& parent) -> size_t { return parent.materialCount; }>*, "materials">,
-		field<dynamic_carray<uint8_t, impl::NXSData, [](const impl::NXSData& parent) -> size_t { return parent.mesh1Size; }>*, "mesh1">,
-		field<dynamic_carray<uint8_t, impl::NXSData, [](const impl::NXSData& parent) -> size_t { return parent.mesh2Size; }>*, "mesh2">,
-		field<dynamic_carray<uint8_t, impl::NXSData, [](const impl::NXSData& parent) -> size_t { return parent.mesh3Size; }>*, "mesh3">
+		field<dynamic_carray<MaterialData, field_resolver<size_t, "materialCount">>*, "materials">,
+		field<dynamic_carray<uint8_t, field_resolver<size_t, "mesh1Size">>*, "mesh1">,
+		field<dynamic_carray<uint8_t, field_resolver<size_t, "mesh2Size">>*, "mesh2">,
+		field<dynamic_carray<uint8_t, field_resolver<size_t, "mesh3Size">>*, "mesh3">
 	>;
 }
 

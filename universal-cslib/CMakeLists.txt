@@ -1,4 +1,5 @@
 add_library(universal-cslib INTERFACE)
 target_compile_features(universal-cslib INTERFACE cxx_std_20)
+target_compile_options(universal-cslib INTERFACE /clang:-ftemplate-backtrace-limit=0 /clang:-fno-rtti)
 target_link_libraries(universal-cslib INTERFACE Eigen3::Eigen)
 add_subdirectory(src)

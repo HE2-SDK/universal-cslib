@@ -10,12 +10,12 @@ namespace ucsl::resources::rfl::v2::reflections {
 
     namespace impl = ::ucsl::resources::rfl::v2;
 
-    template<typename RflData, rflclass_resolver<impl::Ref2Data<RflData>> resolver>
+    template<typename RflData, typename resolver>
     using Ref2Data = structure<impl::Ref2Data<RflData>, "Ref2Data", void,
         field<constant<unsigned int, 0x32464552>, "magic">,
         field<constant<unsigned int, 0x30302E31>, "version">,
         field<unsigned int, "hash">,
-        field<aligned<16, rflclass<impl::Ref2Data<RflData>, resolver>>, "data">
+        field<aligned<16, rflclass<resolver>>, "data">
     >;
 }
 

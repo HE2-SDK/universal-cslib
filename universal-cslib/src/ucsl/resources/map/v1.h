@@ -11,8 +11,9 @@ namespace ucsl::resources::map::v1 {
 		ucsl::math::Position position;
 	};
 
-	template<typename AllocatorSystem>
 	struct MapData {
-		containers::arrays::TArray<SectorData, AllocatorSystem> sectors;
+		SectorData* sectors;
+		unsigned int sectorCount;
+		unsigned int unk1;
 	};
 }

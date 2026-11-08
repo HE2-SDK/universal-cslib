@@ -33,14 +33,14 @@ namespace ucsl::resources::converse_meta::v2::reflections {
 
     using IconInfo = structure<impl::IconInfo, "IconInfo", void,
         field<unsigned int, "iconCount">,
-        field<dynamic_carray<Icon*, impl::IconInfo, [](const impl::IconInfo& parent) -> size_t { return parent.iconCount; }>*, "icons">,
+        field<dynamic_carray<Icon*, field_resolver<unsigned int, "iconCount">>*, "icons">,
         field<unsigned int, "resourceCount">,
-        field<dynamic_carray<const char*, impl::IconInfo, [](const impl::IconInfo& parent) -> size_t { return parent.resourceCount; }>*, "resourceNames">
+        field<dynamic_carray<const char*, field_resolver<unsigned int, "resourceCount">>*, "resourceNames">
     >;
 
     using TypeFace = structure<impl::TypeFace, "TypeFace", void,
         field<unsigned int, "parentCount">,
-        field<dynamic_carray<const char*, impl::TypeFace, [](const impl::TypeFace& parent) -> size_t { return parent.parentCount; }>*, "parents">,
+        field<dynamic_carray<const char*, field_resolver<unsigned int, "parentCount">>*, "parents">,
         field<const char*, "name0">,
         field<const char*, "name1">,
         field<float, "unk0">,
@@ -51,7 +51,7 @@ namespace ucsl::resources::converse_meta::v2::reflections {
 
     using TypeFaceInfo = structure<impl::TypeFaceInfo, "TypeFaceInfo", void,
         field<unsigned int, "typeFaceCount">,
-        field<dynamic_carray<TypeFace*, impl::TypeFaceInfo, [](const impl::TypeFaceInfo& parent) -> size_t { return parent.typeFaceCount; }>*, "typeFaces">
+        field<dynamic_carray<TypeFace*, field_resolver<unsigned int, "typeFaceCount">>*, "typeFaces">
     >;
 
     using CnvrsMetaData = structure<impl::CnvrsMetaData, "CnvrsMetaData", void,

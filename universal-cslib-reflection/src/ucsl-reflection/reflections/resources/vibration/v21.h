@@ -27,7 +27,7 @@ namespace ucsl::resources::vibration::v21::reflections {
     using VibrationMotor = structure<impl::VibrationMotor, "VibrationMotor", void,
         field<char, "motorId">,
         field<unsigned int, "keyframeCount">,
-        field<dynamic_carray<VibrationKeyframe, impl::VibrationMotor, [](const impl::VibrationMotor& parent) -> size_t { return parent.keyframeCount; }>*, "keyframes">
+        field<dynamic_carray<VibrationKeyframe, field_resolver<unsigned int, "keyframeCount">>*, "keyframes">
     >;
 
     using Vibration = structure<impl::Vibration, "Vibration", void,
@@ -36,7 +36,7 @@ namespace ucsl::resources::vibration::v21::reflections {
         field<unsigned char, "motorCount">,
         field<bool, "looping">,
         field<bool, "unk1">,
-        field<dynamic_carray<VibrationMotor, impl::Vibration, [](const impl::Vibration& parent) -> size_t { return parent.motorCount; }>*, "motors">,
+        field<dynamic_carray<VibrationMotor, field_resolver<unsigned char, "motorCount">>*, "motors">,
         field<Sound*, "sound">,
         field<int64_t, "unk4">
     >;
@@ -45,7 +45,7 @@ namespace ucsl::resources::vibration::v21::reflections {
         field<unsigned int, "magic">,
         field<unsigned int, "version">,
         field<unsigned int, "vibrationCount">,
-        field<dynamic_carray<Vibration, impl::VibData, [](const impl::VibData& parent) -> size_t { return parent.vibrationCount; }>*, "vibrations">
+        field<dynamic_carray<Vibration, field_resolver<unsigned int, "vibrationCount">>*, "vibrations">
     >;
 }
 

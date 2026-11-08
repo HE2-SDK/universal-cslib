@@ -65,22 +65,22 @@ namespace ucsl::reflections {
 		field<float, "w">
 	>;
 
-	template<typename T, typename AllocatorSystem> size_t get_array_size(const containers::arrays::Array<T, AllocatorSystem>& arr) { return arr.size(); }
-	template<typename T, typename AllocatorSystem>
-	using Array = structure<containers::arrays::Array<T, AllocatorSystem>, "Array", void,
-		field<dynamic_carray<T, containers::arrays::Array<T, AllocatorSystem>, get_array_size<T, AllocatorSystem>>*, "buffer">,
-		field<size_t, "length">,
-		field<size_t, "capacity">,
-		field<erased<memory::IAllocator*>, "allocator">
-	>;
+	//template<typename T, typename AllocatorSystem> size_t get_array_size(const containers::arrays::Array<T, AllocatorSystem>& arr) { return arr.size(); }
+	//template<typename T, typename AllocatorSystem>
+	//using Array = structure<containers::arrays::Array<T, AllocatorSystem>, "Array", void,
+	//	field<dynamic_carray<T, containers::arrays::Array<T, AllocatorSystem>, get_array_size<T, AllocatorSystem>>*, "buffer">,
+	//	field<size_t, "length">,
+	//	field<size_t, "capacity">,
+	//	field<erased<memory::IAllocator*>, "allocator">
+	//>;
 
-	template<typename T, typename AllocatorSystem> size_t get_tarray_size(const containers::arrays::TArray<T, AllocatorSystem>& arr) { return arr.size(); }
-	template<typename T, typename AllocatorSystem>
-	using TArray = structure<containers::arrays::TArray<T, AllocatorSystem>, "TArray", void,
-		field<dynamic_carray<T, containers::arrays::TArray<T, AllocatorSystem>, get_tarray_size<T, AllocatorSystem>>*, "buffer">,
-		field<size_t, "length">,
-		field<size_t, "capacity">
-	>;
+	//template<typename T, typename AllocatorSystem> size_t get_tarray_size(const containers::arrays::TArray<T, AllocatorSystem>& arr) { return arr.size(); }
+	//template<typename T, typename AllocatorSystem>
+	//using TArray = structure<containers::arrays::TArray<T, AllocatorSystem>, "TArray", void,
+	//	field<dynamic_carray<T, containers::arrays::TArray<T, AllocatorSystem>, get_tarray_size<T, AllocatorSystem>>*, "buffer">,
+	//	field<size_t, "length">,
+	//	field<size_t, "capacity">
+	//>;
 
 	using VariableString = structure<strings::VariableString, "VariableString", void,
 		field<const char*, "buffer">,
@@ -112,4 +112,6 @@ namespace simplerfl {
 	template<> struct canonical<ucsl::strings::VariableString> { using type = primitive<ucsl::strings::VariableString>; };
 	template<> struct canonical<ucsl::objectids::ObjectIdV1> { using type = primitive<ucsl::objectids::ObjectIdV1>; };
 	template<> struct canonical<ucsl::objectids::ObjectIdV2> { using type = primitive<ucsl::objectids::ObjectIdV2>; };
+	template<ucsl::colors::ChannelOrder order> struct canonical<ucsl::colors::Color8<order>> { using type = primitive<ucsl::colors::Color8<order>>; };
+	template<ucsl::colors::ChannelOrder order> struct canonical<ucsl::colors::Colorf<order>> { using type = primitive<ucsl::colors::Colorf<order>>; };
 }

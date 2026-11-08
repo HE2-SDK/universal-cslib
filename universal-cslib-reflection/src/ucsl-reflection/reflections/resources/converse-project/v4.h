@@ -28,7 +28,7 @@ namespace ucsl::resources::converse_project::v4::reflections {
 
     using LanguageInfo = structure<impl::LanguageInfo, "LanguageInfo", void,
         field<int, "languageCount">,
-        field<dynamic_carray<Language*, impl::LanguageInfo, [](const impl::LanguageInfo& parent) -> size_t { return parent.languageCount; }>*, "languages">
+        field<dynamic_carray<Language*, field_resolver<"languageCount">>*, "languages">
     >;
 
     using Color = structure<impl::Color, "Color", void,
@@ -39,7 +39,7 @@ namespace ucsl::resources::converse_project::v4::reflections {
 
     using ColorInfo = structure<impl::ColorInfo, "ColorInfo", void,
         field<unsigned int, "colorCount">,
-        field<dynamic_carray<Color*, impl::ColorInfo, [](const impl::ColorInfo& parent) -> size_t { return parent.colorCount; }>*, "colors">
+        field<dynamic_carray<Color*, field_resolver<"colorCount">>*, "colors">
     >;
 
     using ProjectSettings = structure<impl::ProjectSettings, "ProjectSettings", void,
@@ -82,13 +82,13 @@ namespace ucsl::resources::converse_project::v4::reflections {
     using LanguageItem = structure<impl::LanguageItem<T>, "LanguageItem", void,
         field<const char*, "langName">,
         field<unsigned int, "itemCount">,
-        field<dynamic_carray<T*, impl::LanguageItem<T>, [](const impl::LanguageItem<T>& parent) -> size_t { return parent.itemCount; }>*, "items">
+        field<dynamic_carray<T*, field_resolver<unsigned int, "itemCount">>*, "items">
     >;
 
     using LanguageSettings = structure<impl::LanguageSettings, "LanguageSettings", void,
         field<unsigned int, "count">,
-        field<dynamic_carray<LanguageItem<Font>*, impl::LanguageSettings, [](const impl::LanguageSettings& parent) -> size_t { return parent.count; }>*, "fonts">,
-        field<dynamic_carray<LanguageItem<Layout>*, impl::LanguageSettings, [](const impl::LanguageSettings& parent) -> size_t { return parent.count; }>*, "layouts">
+        field<dynamic_carray<LanguageItem<Font>*, field_resolver<unsigned int, "count">>*, "fonts">,
+        field<dynamic_carray<LanguageItem<Layout>*, field_resolver<unsigned int, "count">>*, "layouts">
     >;
 
     using CnvrsProjData = structure<impl::CnvrsProjData, "CnvrsProjData", void,

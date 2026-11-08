@@ -28,7 +28,7 @@ namespace ucsl::resources::terrain_model::v1::reflections {
     using TerrainMaterialData = structure<impl::TerrainMaterialData, "TerrainMaterialData", void,
         field<unsigned int, "magic">,
         field<unsigned int, "version">,
-        field<dynamic_carray<Material, impl::TerrainMaterialData, [](const impl::TerrainMaterialData& parent) -> size_t { return parent.materialCount; }>*, "materials">
+        field<dynamic_carray<Material, field_resolver<int, "materialCount">>*, "materials">
         field<int, "materialCount">
     >;
 }

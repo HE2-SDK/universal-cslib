@@ -35,7 +35,7 @@ namespace ucsl::reflection::game_interfaces::standalone {
 
 			inline static RflClassNameRegistry* GetInstance() { return instance; }
 
-			inline static typename const RflSystem::RflClass* GetClassByName(const char* name) {
+			inline static const typename RflSystem::RflClass* GetClassByName(const char* name) {
 				return &*reflectionDB->rflClasses.at(name);
 			}
 		};
