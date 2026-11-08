@@ -55,6 +55,8 @@ namespace ucsl::strings {
 	public:
 		VariableString(memory::IAllocator* allocator) : allocatorAndFlags{ allocator } {}
 
+		VariableString(const char* initstr) : buffer{ initstr } {}
+
 		VariableString(const char* initstr, memory::IAllocator* allocator) {
 			init(initstr, allocator);
 		}

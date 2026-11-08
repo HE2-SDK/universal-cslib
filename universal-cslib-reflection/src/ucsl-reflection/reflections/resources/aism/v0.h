@@ -46,8 +46,23 @@ namespace ucsl::resources::aism::v0::reflections {
         impl::ConditionData::AttributeArgumentValue attribute;
     };
 
-    template<typename Parent, union_resolver<Parent> resolver>
-    using ConditionArgumentValue = unionof<ConditionArgumentValueImpl, "ConditionArgumentValue", Parent, resolver,
+    inline size_t get_argument_value_type(const impl::ConditionData::ArgumentType& type) {
+        switch (type) {
+        case impl::ConditionData::ArgumentType::FIXED_BOOL: return 0;
+        case impl::ConditionData::ArgumentType::FIXED_INT: return 1;
+        case impl::ConditionData::ArgumentType::FIXED_FLOAT: return 2;
+        case impl::ConditionData::ArgumentType::RANDOM_BOOL: return 0;
+        case impl::ConditionData::ArgumentType::RANDOM_INT: return 3;
+        case impl::ConditionData::ArgumentType::RANDOM_FLOAT: return 4;
+        case impl::ConditionData::ArgumentType::ATTRIBUTE_BOOL: return 5;
+        case impl::ConditionData::ArgumentType::ATTRIBUTE_INT: return 5;
+        case impl::ConditionData::ArgumentType::ATTRIBUTE_FLOAT: return 5;
+        default: assert(false && "invalid condition type"); return 0;
+        }
+    }
+
+    template<typename Selector>
+    using ConditionArgumentValue = unionof<ConditionArgumentValueImpl, "ConditionArgumentValue", Selector,
         field<FixedBoolConditionArgumentValue, "fixedBool">,
         field<FixedIntConditionArgumentValue, "fixedInt">,
         field<FixedFloatConditionArgumentValue, "fixedFloat">,
@@ -88,35 +103,9 @@ namespace ucsl::resources::aism::v0::reflections {
     >;
 
     using ConditionData = structure<impl::ConditionData, "ConditionData", void,
-        field<ConditionArgumentValue<impl::ConditionData, [](const impl::ConditionData& condition) -> size_t {
-            switch (condition.lhsType) {
-            case impl::ConditionData::ArgumentType::FIXED_BOOL: return 0;
-            case impl::ConditionData::ArgumentType::FIXED_INT: return 1;
-            case impl::ConditionData::ArgumentType::FIXED_FLOAT: return 2;
-            case impl::ConditionData::ArgumentType::RANDOM_BOOL: return 0;
-            case impl::ConditionData::ArgumentType::RANDOM_INT: return 3;
-            case impl::ConditionData::ArgumentType::RANDOM_FLOAT: return 4;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_BOOL: return 5;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_INT: return 5;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_FLOAT: return 5;
-            default: assert(false, "invalid condition type"); return 0;
-            }
-        }>*, "lhsValue">,
+        field<ConditionArgumentValue<selector_resolver<size_t, field_resolver<impl::ConditionData::ArgumentType, "lhsType">>::impl<get_argument_value_type>>*, "lhsValue">,
         field<ConditionArgumentType, "lhsType">,
-        field<ConditionArgumentValue<impl::ConditionData, [](const impl::ConditionData& condition) -> size_t {
-            switch (condition.rhsType) {
-            case impl::ConditionData::ArgumentType::FIXED_BOOL: return 0;
-            case impl::ConditionData::ArgumentType::FIXED_INT: return 1;
-            case impl::ConditionData::ArgumentType::FIXED_FLOAT: return 2;
-            case impl::ConditionData::ArgumentType::RANDOM_BOOL: return 0;
-            case impl::ConditionData::ArgumentType::RANDOM_INT: return 3;
-            case impl::ConditionData::ArgumentType::RANDOM_FLOAT: return 4;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_BOOL: return 5;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_INT: return 5;
-            case impl::ConditionData::ArgumentType::ATTRIBUTE_FLOAT: return 5;
-            default: assert(false, "invalid condition type"); return 0;
-            }
-        }>*, "rhsValue">,
+        field<ConditionArgumentValue<selector_resolver<size_t, field_resolver<impl::ConditionData::ArgumentType, "rhsType">>::impl<get_argument_value_type>>*, "rhsValue">,
         field<ConditionArgumentType, "rhsType">,
         field<ConditionOperator, "op">
     >;
@@ -136,7 +125,7 @@ namespace ucsl::resources::aism::v0::reflections {
         field<const char*, "targetStateName">,
         field<TriggerTriggerType, "triggerType">,
         field<TriggerConditionType, "conditionType">,
-        field<dynamic_carray<ConditionData, impl::TriggerData, [](const impl::TriggerData& trigger) -> size_t { return trigger.conditionCount; }>*, "conditions">,
+        field<dynamic_carray<ConditionData, field_resolver<unsigned int, "conditionCount">>*, "conditions">,
         field<unsigned int, "conditionCount">
     >;
 
@@ -150,14 +139,14 @@ namespace ucsl::resources::aism::v0::reflections {
         field<const char*, "type">,
         field<int, "superState">,
         field<int, "entryChildState">,
-        field<dynamic_carray<TriggerData, impl::StateData, [](const impl::StateData& state) -> size_t { return state.triggerCount; }>*, "triggers">,
+        field<dynamic_carray<TriggerData, field_resolver<unsigned int, "triggerCount">>*, "triggers">,
         field<unsigned int, "triggerCount">,
-        field<dynamic_carray<ReactionData, impl::StateData, [](const impl::StateData& state) -> size_t { return state.reactionCount; }>*, "reactions">,
+        field<dynamic_carray<ReactionData, field_resolver<unsigned int, "reactionCount">>*, "reactions">,
         field<unsigned int, "reactionCount">
 	>;
 
 	using AIStateMachineData = structure<impl::AIStateMachineData, "AIStateMachineData", void,
-        field<dynamic_carray<StateData, impl::AIStateMachineData, [](const impl::AIStateMachineData& aism) -> size_t { return aism.stateCount; }>*, "states">,
+        field<dynamic_carray<StateData, field_resolver<unsigned int, "stateCount">>*, "states">,
 		field<unsigned int, "stateCount">
 	>;
 }

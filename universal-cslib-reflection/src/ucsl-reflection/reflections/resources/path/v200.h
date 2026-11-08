@@ -16,12 +16,14 @@ namespace ucsl::resources::path::v200::reflections {
 		option<"STRING">
 	>;
 
-	using TagValue = unionof<impl::TagValue, "TagValue", impl::TagData, [](const impl::TagData& parent) -> size_t {
-		switch (parent.type) {
+	inline size_t get_tag_value_idx(const impl::TagType& type) {
+		switch (type) {
 		case impl::TagType::UINT: return 0;
 		case impl::TagType::STRING: return 1;
 		}
-	},
+	}
+
+	using TagValue = unionof<impl::TagValue, "TagValue", selector_resolver<size_t, field_resolver<impl::TagType, "type">>::impl<get_tag_value_idx>,
 		field<unsigned int, "uintValue">,
 		field<const char*, "stringValue">
 	>;
@@ -37,17 +39,17 @@ namespace ucsl::resources::path::v200::reflections {
 		field<bool, "unk1">,
 		field<unsigned short, "nodeCount">,
 		field<float, "length">,
-		field<dynamic_carray<bool, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "unk2">,
-		field<dynamic_carray<float, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "distances">,
-		field<dynamic_carray<ucsl::math::Position, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "positions">,
-		field<dynamic_carray<ucsl::math::Position, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "upVectors">,
-		field<dynamic_carray<ucsl::math::Position, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "forwardVectors">,
+		field<dynamic_carray<bool, field_resolver<unsigned short, "nodeCount">>*, "unk2">,
+		field<dynamic_carray<float, field_resolver<unsigned short, "nodeCount">>*, "distances">,
+		field<dynamic_carray<ucsl::math::Position, field_resolver<unsigned short, "nodeCount">>*, "positions">,
+		field<dynamic_carray<ucsl::math::Position, field_resolver<unsigned short, "nodeCount">>*, "upVectors">,
+		field<dynamic_carray<ucsl::math::Position, field_resolver<unsigned short, "nodeCount">>*, "forwardVectors">,
 		field<unsigned short, "extraVertexCount">,
-		field<dynamic_carray<ucsl::math::Position, impl::PathData, [](const impl::PathData& path) -> size_t { return path.extraVertexCount; }>*, "extraVertices">,
+		field<dynamic_carray<ucsl::math::Position, field_resolver<unsigned short, "extraVertexCount">>*, "extraVertices">,
 		field<ucsl::math::Position, "aabbMin">,
 		field<ucsl::math::Position, "aabbMax">,
 		field<unsigned short, "tagCount">,
-		field<dynamic_carray<TagData, impl::PathData, [](const impl::PathData& path) -> size_t { return path.tagCount; }>*, "tags">,
+		field<dynamic_carray<TagData, field_resolver<unsigned short, "tagCount">>*, "tags">,
 		field<unsigned short, "unk3">,
 		field<kd_tree::v1::reflections::ResKdTreeData*, "kdTree">
 	>;
@@ -56,7 +58,7 @@ namespace ucsl::resources::path::v200::reflections {
 		field<unsigned int, "magic">,
 		field<unsigned int, "version">,
 		field<unsigned int, "pathCount">,
-		field<dynamic_carray<PathData, impl::PathsData, [](const impl::PathsData& paths) -> size_t { return paths.pathCount; }>*, "paths">
+		field<dynamic_carray<PathData, field_resolver<unsigned int, "pathCount">>*, "paths">
 	>;
 }
 

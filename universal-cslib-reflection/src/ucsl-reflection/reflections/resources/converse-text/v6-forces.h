@@ -59,13 +59,13 @@ namespace ucsl::resources::converse_text::v6_forces::reflections {
     using Sheet = structure<impl::Sheet, "Sheet", void,
         field<const char*, "sheetName">,
         field<unsigned short, "entryAmount">,
-        field<dynamic_carray<Entry, impl::Sheet, [](const impl::Sheet& parent) -> size_t { return parent.entryAmount; }>*, "entries">
+        field<dynamic_carray<Entry, field_resolver<unsigned short, "entryAmount">>*, "entries">
     >;
 
     using CnvrsTextData = structure<impl::CnvrsTextData, "CnvrsTextData", void,
         field<unsigned char, "version">,
         field<unsigned char, "sheetAmount">,
-        field<dynamic_carray<Sheet, impl::CnvrsTextData, [](const impl::CnvrsTextData& parent) -> size_t { return parent.sheetAmount; }>*, "sheets">
+        field<dynamic_carray<Sheet, field_resolver<unsigned char, "sheetAmount">>*, "sheets">
     >;
 }
 

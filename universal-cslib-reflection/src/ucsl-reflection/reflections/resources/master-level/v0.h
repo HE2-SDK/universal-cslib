@@ -1,4 +1,5 @@
 #pragma once
+#include <ucsl/resources/master-level/v0.h>
 #include <ucsl/bitset.h>
 #include <ucsl/math.h>
 
@@ -23,8 +24,8 @@ namespace ucsl::resources::master_level::v0::reflections {
 		field<const char*, "name">,
 		field<unsigned int, "resourceCount">,
 		field<unsigned int, "dependencyCount">,
-		field<dynamic_carray<ResourceData*, impl::LevelData, [](const LevelData& mlevel) -> size_t { return mlevel.resourceCount; }>*, "resources">,
-		field<dynamic_carray<DependencyData*, impl::LevelData, [](const LevelData& mlevel) -> size_t { return mlevel.dependencyCount; }>*, "dependencies">,
+		field<dynamic_carray<ResourceData*, field_resolver<unsigned int, "resourceCount">>*, "resources">,
+		field<dynamic_carray<DependencyData*, field_resolver<unsigned int, "dependencyCount">>*, "dependencies">,
 		field<bool, "isPublic">,
 		field<bool, "hasFiles">
 	>;
@@ -33,7 +34,7 @@ namespace ucsl::resources::master_level::v0::reflections {
 		field<unsigned int, "magic">,
 		field<unsigned int, "version">,
 		field<unsigned int, "levelCount">,
-		field<dynamic_carray<LevelData*, impl::MasterLevelData, [](const MasterLevelData& mlevel) -> size_t { return mlevel.levelCount; }>*, "levels">
+		field<dynamic_carray<LevelData*, field_resolver<unsigned int, "levelCount">>*, "levels">
 	>;
 };
 

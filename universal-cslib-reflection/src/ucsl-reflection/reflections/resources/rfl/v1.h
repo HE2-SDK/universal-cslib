@@ -10,8 +10,8 @@ namespace ucsl::resources::rfl::v1::reflections {
 
     namespace impl = ::ucsl::resources::rfl::v1;
 
-    template<typename RflData, rflclass_resolver<impl::Ref1Data<RflData>> resolver>
+    template<typename RflData, typename resolver>
     using Ref1Data = structure<impl::Ref1Data<RflData>, "Ref1Data", void,
-        field<aligned<16, rflclass<impl::Ref1Data<RflData>, resolver>>, "data">
+        field<aligned<16, rflclass<resolver>>, "data">
     >;
 }

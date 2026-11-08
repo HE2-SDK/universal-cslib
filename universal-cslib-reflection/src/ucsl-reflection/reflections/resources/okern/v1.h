@@ -20,13 +20,13 @@ namespace ucsl::resources::okern::v1::reflections {
     using Character = structure<impl::Character, "Character", void,
         field<wchar_t, "character">,
         field<unsigned short, "subCharCount">,
-        field<dynamic_carray<SubCharacter, impl::Character, [](const impl::Character& parent) -> size_t { return parent.subCharCount; }>*, "subChars">
+        field<dynamic_carray<SubCharacter, field_resolver<"subCharCount">>*, "subChars">
     >;
 
     using OkernData = structure<impl::OkernData, "OkernData", void,
         field<unsigned int, "version">,
         field<unsigned int, "charCount">,
-        field<dynamic_carray<Character, impl::OkernData, [](const impl::OkernData& parent) -> size_t { return parent.charCount; }>*, "chars">
+        field<dynamic_carray<Character, field_resolver<"charCount">>*, "chars">
         field<const char*, "fontName">
     >;
 }

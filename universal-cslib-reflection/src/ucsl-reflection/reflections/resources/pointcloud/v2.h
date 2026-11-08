@@ -1,4 +1,7 @@
 #pragma once
+#include <simple-reflection/simple-reflection.h>
+#include <ucsl-reflection/operators.h>
+#include <ucsl-reflection/reflections/basic-types.h>
 #include <ucsl/resources/pointcloud/v2.h>
 
 namespace ucsl::resources::pointcloud::v2::reflections {
@@ -7,12 +10,22 @@ namespace ucsl::resources::pointcloud::v2::reflections {
 
 	namespace impl = ucsl::resources::pointcloud::v2;
 
+	using RotationOrder = enumeration<impl::RotationOrder, "RotationOrder", unsigned int,
+		option<"NONE">,
+		option<"XYZ">,
+		option<"YZX">,
+		option<"ZXY">,
+		option<"XZY">,
+		option<"YXZ">,
+		option<"ZYX">
+	>;
+
 	using InstanceData = structure<impl::InstanceData, "InstanceData", void,
 		field<const char*, "name">,
 		field<const char*, "resourceName">,
 		field<ucsl::math::Position, "position">,
 		field<ucsl::math::Position, "rotation">,
-		field<constant<unsigned int, 1>, "unk1">,
+		field<RotationOrder, "rotationOrder">,
 		field<ucsl::math::Position, "scale">,
 		field<constant<unsigned int, 0>, "unk2">
 	>;
@@ -20,7 +33,7 @@ namespace ucsl::resources::pointcloud::v2::reflections {
 	using PointcloudData = structure<impl::PointcloudData, "PointcloudData", void,
 		field<constant<unsigned int, 0x43495043>, "magic">,
 		field<constant<unsigned int, 2>, "version">,
-		field<dynamic_carray<InstanceData, impl::PointcloudData, [](const impl::PointcloudData& parent) -> size_t { return parent.instanceCount; }>*, "instances">,
+		field<dynamic_carray<InstanceData, field_resolver<unsigned int, "instanceCount">>*, "instances">,
 		field<size_t, "instanceCount">
 	>;
 }

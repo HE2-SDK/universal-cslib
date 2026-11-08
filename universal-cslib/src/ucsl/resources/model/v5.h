@@ -1,8 +1,9 @@
 #pragma once
+#include <ucsl/math.h>
 
 namespace ucsl::resources::model::v5 {
     struct ReflectionInfo {
-        enum Format : unsigned int {
+        enum class Format : unsigned int {
             FLOAT1 = 0x2C83A4,
             FLOAT2 = 0x2C23A5,
             FLOAT3 = 0x2A23B9,
@@ -53,7 +54,7 @@ namespace ucsl::resources::model::v5 {
             INVALID = 0xFFFFFFFF
         };
 
-        enum Method : unsigned char {
+        enum class Method : unsigned char {
             NORMAL,
             PARTIAL_U,
             PARTIAL_V,
@@ -63,7 +64,7 @@ namespace ucsl::resources::model::v5 {
             LOOKUP_PRE_SAMPLED,
         };
 
-        enum Type : unsigned char {
+        enum class Type : unsigned char {
             POSITION,
             BLEND_WEIGHT,
             BLEND_INDICES,
@@ -95,6 +96,8 @@ namespace ucsl::resources::model::v5 {
 
     struct Mesh {
         const char* name;
+        unsigned int indexCount;
+        unsigned short* indices;
         unsigned int vertexCount;
         unsigned int vertexStride;
         unsigned char* vertexData;
@@ -102,7 +105,7 @@ namespace ucsl::resources::model::v5 {
         unsigned int boneIndexCount;
         unsigned char* boneIndices;
         unsigned int textureCount;
-        Texture* textures;
+        Texture** textures;
     };
 
     struct MeshGroup {
@@ -110,8 +113,8 @@ namespace ucsl::resources::model::v5 {
         Mesh** opaqueMeshes;
         unsigned int transparentMeshCount;
         Mesh** transparentMeshes;
-        unsigned int punchMeshCount;
-        Mesh** punchMeshes;
+        unsigned int punchthroughMeshCount;
+        Mesh** punchthroughMeshes;
         unsigned int customMeshTypeCount;
         const char** customMeshTypeNames;
         unsigned int* customMeshTypeMeshCounts;
@@ -133,7 +136,7 @@ namespace ucsl::resources::model::v5 {
         const char* name;
     };
 
-	struct ContextsData {
+	struct ModelContexts {
         unsigned int meshGroupCount;
         MeshGroup** meshGroups;
         unsigned int morphModelCount;
@@ -141,5 +144,13 @@ namespace ucsl::resources::model::v5 {
         unsigned int nodeCount;
         Node* nodes;
         ucsl::math::Matrix34* nodeTransforms;
+        void* aabb;
 	};
+    
+    struct TerrainModelContexts {
+        unsigned int meshGroupCount;
+        MeshGroup** meshGroups;
+        const char* name;
+        void* aabb;
+    };
 }

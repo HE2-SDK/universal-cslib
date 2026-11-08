@@ -20,7 +20,7 @@ namespace ucsl::resources::converse_text::v6::reflections {
 
     using Attributes = structure<impl::Attributes, "Attributes", void,
         field<unsigned int, "attributeAmount">,
-        field<dynamic_carray<AttributeEntry, impl::Attributes, [](const impl::Attributes& parent) -> size_t { return parent.attributeAmount; }>*, "attributes">
+        field<dynamic_carray<AttributeEntry, field_resolver<unsigned int, "attributeAmount">>*, "attributes">
     >;
 
     using Layout = structure<impl::Layout, "Layout", void,
@@ -64,7 +64,7 @@ namespace ucsl::resources::converse_text::v6::reflections {
         field<int, "hash">,
         field<const char*, "key">,
         field<FontLayout*, "fontLayout">,
-        field<dynamic_carray<wchar_t, impl::Entry, [](const impl::Entry& parent) -> size_t { return parent.textLength; }>*, "text">,
+        field<dynamic_carray<wchar_t, field_resolver<unsigned int, "textLength">>*, "text">,
         field<unsigned int, "textLength">,
         field<Attributes*, "attributes">
     >;
@@ -73,7 +73,7 @@ namespace ucsl::resources::converse_text::v6::reflections {
         field<unsigned char, "version">,
         field<unsigned char, "sheetAmount">, //unused
         field<unsigned short, "entryAmount">,
-        field<dynamic_carray<Entry, impl::CnvrsTextData, [](const impl::CnvrsTextData& parent) -> size_t { return parent.entryAmount; }>*, "entries">,
+        field<dynamic_carray<Entry, field_resolver<unsigned short, "entryAmount">>*, "entries">,
         field<const char*, "sheetName">
     >;
 }

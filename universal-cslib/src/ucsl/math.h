@@ -8,6 +8,9 @@
 #include "newtype.h"
 
 namespace ucsl::math {
+	namespace internal {
+		using UnalignedQuaternion = Eigen::Quaternion<float, Eigen::DontAlign>;
+	}
 	UCSL_NEWTYPE(Vector2, Eigen::Vector2f, Matrix);
 	// UCSL_NEWTYPE(Vector3, Eigen::AlignedVector3<float>, AlignedVector3);
 	UCSL_NEWTYPE_ALIGNED(Vector3, Eigen::Vector3f, Matrix, 16);
@@ -16,7 +19,7 @@ namespace ucsl::math {
 	UCSL_NEWTYPE(Matrix34, Eigen::Affine3f, Transform);
 	UCSL_NEWTYPE(Matrix44, Eigen::Projective3f, Transform);
 	UCSL_NEWTYPE(Position, Eigen::Vector3f, Matrix);
-	UCSL_NEWTYPE(Rotation, UCSL_PACK(Eigen::Quaternion<float, Eigen::DontAlign>), Quaternion);
+	UCSL_NEWTYPE(Rotation, internal::UnalignedQuaternion, Quaternion);
 }
 
 inline bool operator==(const ucsl::math::Matrix44& one, const ucsl::math::Matrix44& other) {

@@ -30,29 +30,29 @@ namespace ucsl::resources::path::v1::reflections {
 		field<unsigned int, "unk2">,
 		field<float, "unk3">,
 		field<unsigned int, "nodeCount">,
-		field<dynamic_carray<NodeData, impl::PathData, [](const impl::PathData& path) -> size_t { return path.nodeCount; }>*, "nodes">,
+		field<dynamic_carray<NodeData, field_resolver<unsigned int, "nodeCount">>*, "nodes">,
 		field<unsigned int, "extraVertexCount">,
-		field<dynamic_carray<ucsl::math::Position, impl::PathData, [](const impl::PathData& path) -> size_t { return path.extraVertexCount; }>*, "extraVertices">
+		field<dynamic_carray<ucsl::math::Position, field_resolver<unsigned int, "extraVertexCount">>*, "extraVertices">
 	>;
 
 	using PathsData = structure<impl::PathsData, "PathsData", void,
 		field<unsigned int, "magic">,
 		field<unsigned int, "version">,
 		field<unsigned int, "pathIdCount">,
-		field<dynamic_carray<PathIdData, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.pathIdCount; }>*, "pathIds">,
+		field<dynamic_carray<PathIdData, field_resolver<unsigned int, "pathIdCount">>*, "pathIds">,
 		field<unsigned int, "pathCount">,
-		field<dynamic_carray<PathData, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.pathCount; }>*, "paths">,
+		field<dynamic_carray<PathData, field_resolver<unsigned int, "pathCount">>*, "paths">,
 		field<weak<PathData*>, "stageGuidePath">,
 		field<unsigned int, "objPathSize">,
-		field<dynamic_carray<weak<PathData*>, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.objPathSize; }>*, "objPaths">,
+		field<dynamic_carray<weak<PathData*>, field_resolver<unsigned int, "objPathSize">>*, "objPaths">,
 		field<unsigned int, "qsPathSize">,
-		field<dynamic_carray<weak<PathData*>, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.qsPathSize; }>*, "qsPaths">,
+		field<dynamic_carray<weak<PathData*>, field_resolver<unsigned int, "qsPathSize">>*, "qsPaths">,
 		field<unsigned int, "svPathSize">,
-		field<dynamic_carray<weak<PathData*>, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.svPathSize; }>*, "svPaths">,
+		field<dynamic_carray<weak<PathData*>, field_resolver<unsigned int, "svPathSize">>*, "svPaths">,
 		field<unsigned int, "grPathSize">,
-		field<dynamic_carray<weak<PathData*>, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.grPathSize; }>*, "grPaths">,
+		field<dynamic_carray<weak<PathData*>, field_resolver<unsigned int, "grPathSize">>*, "grPaths">,
 		field<unsigned int, "unkPathSize">,
-		field<dynamic_carray<weak<PathData*>, impl::PathsData, [](const impl::PathsData& parent) -> size_t { return parent.unkPathSize; }>*, "unkPaths">
+		field<dynamic_carray<weak<PathData*>, field_resolver<unsigned int, "unkPathSize">>*, "unkPaths">
 	>;
 }
 

@@ -51,16 +51,18 @@ namespace ucsl::resources::fxcol::v1::reflections {
         field<float, "height">,
         field<float, "borderThickness">
     >;
-
-    using Extents = unionof<impl::ShapeData::Extents, "Extents", impl::ShapeData, [](const impl::ShapeData& parent) -> size_t {
-        switch (parent.shape) {
+    
+    inline size_t get_shape_idx(const impl::ShapeData::Shape& shape) {
+        switch (shape) {
         case impl::ShapeData::Shape::SPHERE: return 0;
         case impl::ShapeData::Shape::CYLINDER: return 1;
         case impl::ShapeData::Shape::ANISOTROPIC_OBB: return 2;
         case impl::ShapeData::Shape::ISOTROPIC_OBB: return 3;
         default: assert(false && "unknown shape"); return 0;
         }
-    }, 
+    }
+
+    using Extents = unionof<impl::ShapeData::Extents, "Extents", selector_resolver<size_t, field_resolver<impl::ShapeData::Shape, "shape">>::impl<get_shape_idx>,
         field<SphereExtents, "sphere">,
         field<CylinderExtents, "cylinder">,
         field<AnisotropicObbExtents, "anisotropicObb">,
@@ -92,15 +94,17 @@ namespace ucsl::resources::fxcol::v1::reflections {
         field<float, "interpolationTime">
     >;
 
-    using Parameters = unionof<impl::ShapeData::Parameters, "Parameters", impl::ShapeData, [](const impl::ShapeData& parent) -> size_t {
-        switch (parent.type) {
+    inline size_t get_shape_type_idx(const impl::ShapeData::Type& type) {
+        switch (type) {
         case impl::ShapeData::Type::SCENE_PARAMETER_INDEX: return 0;
         case impl::ShapeData::Type::LIGHT_PARAMETER_INDEX: return 1;
         case impl::ShapeData::Type::HEAT_HAZE: return 2;
         case impl::ShapeData::Type::CAMERA: return 3;
         default: assert(false && "unknown type"); return 0;
         }
-    },
+    }
+
+    using Parameters = unionof<impl::ShapeData::Parameters, "Parameters", selector_resolver<size_t, field_resolver<impl::ShapeData::Type, "type">>::impl<get_shape_type_idx>,
         field<SceneParameterIndexParameters, "sceneParameterIndex">,
         field<LightParameterIndexParameters, "lightParameterIndex">,
         field<HeatHazeParameters, "heatHaze">,
@@ -143,11 +147,11 @@ namespace ucsl::resources::fxcol::v1::reflections {
         field<constant<unsigned int, 0x4658434F>, "magic">,
         field<constant<unsigned int, 1>, "version">,
         field<unsigned int, "shapeCount">,
-        field<dynamic_carray<ShapeData, impl::FxColData, [](const impl::FxColData& parent) -> size_t { return parent.shapeCount; }>*, "shapes">,
+        field<dynamic_carray<ShapeData, field_resolver<unsigned int, "shapeCount">>*, "shapes">,
         field<unsigned int, "kdTreeLeafCount">,
-        field<dynamic_carray<KdTreeLeafData, impl::FxColData, [](const impl::FxColData& parent) -> size_t { return parent.kdTreeLeafCount; }>*, "kdTreeLeaves">,
+        field<dynamic_carray<KdTreeLeafData, field_resolver<unsigned int, "kdTreeLeafCount">>*, "kdTreeLeaves">,
         field<unsigned int, "kdTreeNodeCount">,
-        field<dynamic_carray<KdTreeNodeData, impl::FxColData, [](const impl::FxColData& parent) -> size_t { return parent.kdTreeNodeCount; }>*, "kdTreeNodes">
+        field<dynamic_carray<KdTreeNodeData, field_resolver<unsigned int, "kdTreeNodeCount">>*, "kdTreeNodes">
     >;
 }
 

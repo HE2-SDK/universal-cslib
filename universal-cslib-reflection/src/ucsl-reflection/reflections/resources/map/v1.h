@@ -17,13 +17,14 @@ namespace ucsl::resources::map::v1::reflections {
 		field<ucsl::math::Position, "position">
 	>;
 
-	template<typename AllocatorSystem>
-	using MapData = structure<impl::MapData<AllocatorSystem>, "MapData", void,
-		field<containers::arrays::TArray<SectorData, AllocatorSystem>, "sectors">
+	using MapData = structure<impl::MapData, "MapData", void,
+		field<dynamic_carray<SectorData, field_resolver<unsigned int, "sectorCount">>*, "sectors">,
+		field<unsigned int, "sectorCount">,
+		field<unsigned int, "unk1">
 	>;
 }
 
 namespace simplerfl {
 	template<> struct canonical<ucsl::resources::map::v1::SectorData> { using type = ucsl::resources::map::v1::reflections::SectorData; };
-	template<typename AllocatorSystem> struct canonical<ucsl::resources::map::v1::MapData<AllocatorSystem>> { using type = ucsl::resources::map::v1::reflections::MapData<AllocatorSystem>; };
+	template<> struct canonical<ucsl::resources::map::v1::MapData> { using type = ucsl::resources::map::v1::reflections::MapData; };
 }

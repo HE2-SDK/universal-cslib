@@ -205,7 +205,7 @@ namespace ucsl::reflection::traversals {
 		static typename Algorithm::result_type apply(Spread<S, opaque_obj&>... objs, Args&& ...args) {
 			traversal<Algorithm> t{ std::forward<Args>(args)... };
 
-			return t.operator()<T>(objs...);
+			return t.template operator()<T>(objs...);
 		}
 	};
 }

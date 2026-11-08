@@ -1,6 +1,6 @@
 #pragma once
 
-namespace ucsl::resources::material::contexts {
+namespace ucsl::resources::material::v3 {
     enum class TextureWrapMode : unsigned char {
         REPEAT,
         MIRROR,
@@ -12,10 +12,10 @@ namespace ucsl::resources::material::contexts {
     };
 
     enum class BlendMode : unsigned char {
-        MODE_2_4_0,
-        MODE_2_1_0,
-        MODE_0_7_0,
-        MODE_2_1_2,
+        MIX,
+        ADD,
+        MULTIPLY,
+        SUBTRACT,
     };
 
     struct TextureData {

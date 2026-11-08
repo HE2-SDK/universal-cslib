@@ -107,8 +107,8 @@ namespace ucsl::resources::pba::v1::reflections {
         field<short, "group">,
         field<unsigned int, "nodeCount">,
         field<unsigned int, "linkCount">,
-        field<dynamic_carray<Node, impl::SoftBody, [](const impl::SoftBody& parent) -> size_t { return parent.nodeCount; }>*, "nodes">,
-        field<dynamic_carray<Link, impl::SoftBody, [](const impl::SoftBody& parent) -> size_t { return parent.linkCount; }>*, "links">
+        field<dynamic_carray<Node, field_resolver<unsigned int, "nodeCount">>*, "nodes">,
+        field<dynamic_carray<Link, field_resolver<unsigned int, "linkCount">>*, "links">
     >;
 
     using PbaData = structure<impl::PbaData, "PbaData", void,
@@ -117,10 +117,10 @@ namespace ucsl::resources::pba::v1::reflections {
         field<const char*, "skeletonName">,
         field<unsigned int, "rigidBodyCount">,
         field<unsigned int, "constraintCount">,
-        field<dynamic_carray<RigidBody, impl::PbaData, [](const impl::PbaData& parent) -> size_t { return parent.rigidBodyCount; }>*, "rigidBodies">,
-        field<dynamic_carray<Constraint, impl::PbaData, [](const impl::PbaData& parent) -> size_t { return parent.constraintCount; }>*, "constraints">,
+        field<dynamic_carray<RigidBody, field_resolver<unsigned int, "rigidBodyCount">>*, "rigidBodies">,
+        field<dynamic_carray<Constraint, field_resolver<unsigned int, "constraintCount">>*, "constraints">,
         field<unsigned int, "softBodyCount">,
-        field<dynamic_carray<SoftBody, impl::PbaData, [](const impl::PbaData& parent) -> size_t { return parent.softBodyCount; }>*, "softBodies">
+        field<dynamic_carray<SoftBody, field_resolver<unsigned int, "softBodyCount">>*, "softBodies">
     >;
 }
 

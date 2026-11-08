@@ -57,13 +57,17 @@ namespace ucsl::resources::cemt::v100000 {
 		AnimationTrackParam* tracks[4];
 	};
 
+	// 0x140FF4B40
 	struct ChildEffect {
 		enum class Flag : unsigned char {
 			ENABLE_USING_ANIMATION,
+			UNK1,
+			INHERIT_ROTATION,
 		};
 
 		bits::Bitset<Flag> flags;
 		char unkType; // 0x01 = affected by fluctuation, 0x02 = related to color?
+		unsigned char unk00;
 		float unk0;
 		float unk1;
 		float unk2;
@@ -208,6 +212,7 @@ namespace ucsl::resources::cemt::v100000 {
 			};
 
 			WaveformType waveformType;
+			bool unk2; // 0x140FF4E21
 			float baseOffset;
 			JitteredValue unk0;
 			JitteredValue unk1;
@@ -453,6 +458,7 @@ namespace ucsl::resources::cemt::v100000 {
 			math::Position* vector;
 		};
 
+		const char* name;
 		Type type;
 		unsigned int size;
 		DataPtr data;
@@ -478,6 +484,24 @@ namespace ucsl::resources::cemt::v100000 {
 		enum class ParticleUnkMode : unsigned char {
 			UNK0,
 			UNK1,
+		};
+
+		enum class DirectionType : unsigned int {
+			UNK0,
+			UNK1,
+			UNK2,
+			UNK3,
+			UNK4,
+			UNK5,
+		};
+
+		enum class DirectionTypeU8 : unsigned char {
+			UNK0,
+			UNK1,
+			UNK2,
+			UNK3,
+			UNK4,
+			UNK5,
 		};
 
 		struct Unk0ParticleParam {
@@ -507,7 +531,7 @@ namespace ucsl::resources::cemt::v100000 {
 
 		struct Unk4ParticleParam {
 			unsigned int type;
-			unsigned int unk3;
+			DirectionType directionType;
 			char pad1;
 			unsigned char unk2;
 			unsigned char gap3;
@@ -521,7 +545,7 @@ namespace ucsl::resources::cemt::v100000 {
 			char pad[3];
 			unsigned int unk1;
 			unsigned char unk4;
-			unsigned char unk5;
+			DirectionTypeU8 directionType;
 			unsigned char unk6;
 			bool unk2;
 			char pad2[0x8];
@@ -532,7 +556,7 @@ namespace ucsl::resources::cemt::v100000 {
 			unsigned int unkStride; // 0x141006D02
 			unsigned char unk1;
 			char pad1[0x3];
-			unsigned char unk4;
+			DirectionTypeU8 directionType;
 			unsigned char unk3;
 			bool unk2;
 			char pad2;
@@ -728,7 +752,7 @@ namespace ucsl::resources::cemt::v100000 {
 		};
 
 		struct DeathParam {
-			enum class DeathMode {
+			enum class DeathMode : unsigned int {
 				WAIT_FOR_ELEMENTS,
 				KILL_AFTER_DELAY,
 				WAIT_FOR_ELEMENTS_OR_KILL_AFTER_DELAY,
@@ -754,7 +778,7 @@ namespace ucsl::resources::cemt::v100000 {
 				float worldSpreadVelocity;
 				float worldSpread;
 				SpreadDirectionType worldSpreadDirectionType;
-				csl::math::Position worldSpreadAnglesOrDirection;
+				math::Position worldSpreadAnglesOrDirection;
 				float initialVelocityJitter;
 				float velocityJitter;
 			};
@@ -908,7 +932,6 @@ namespace ucsl::resources::cemt::v100000 {
 		MaskType3 unkType2;
 		MaskType2 unkType3;
 		unsigned int unkType4;
-		unsigned int gap6aa1bc;
 		ElementParam elementParam;
 	};
 
