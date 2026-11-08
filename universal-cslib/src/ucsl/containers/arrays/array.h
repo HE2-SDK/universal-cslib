@@ -23,12 +23,8 @@ namespace ucsl::containers::arrays {
 		Array() : ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>{} {}
 		Array(AllocatorSystem::allocator_type* allocator) : allocator{ allocator }, ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>{} {}
 		Array(AllocatorSystem::allocator_type* allocator, size_t capacity) : allocator{ allocator }, ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>{ capacity } {}
-		Array(const Array<T, AllocatorSystem>& other) : allocator{ other.allocator } {
-			this->ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>::ArrayBase(other);
-		}
-		Array(Array<T, AllocatorSystem>&& other) : allocator{ other.allocator } {
-			this->ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>::ArrayBase(std::move(other));
-		}
+		Array(const Array<T, AllocatorSystem>& other) : allocator{ other.allocator }, ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>{ other } {}
+		Array(Array<T, AllocatorSystem>&& other) : allocator{ other.allocator }, ArrayBase<T, size_t, ArrayArrayAllocatorSystem<T, AllocatorSystem>>{ std::move(other) } {}
 
 		void change_allocator(AllocatorSystem::allocator_type* new_allocator) {
 			if (!new_allocator || allocator == new_allocator)
