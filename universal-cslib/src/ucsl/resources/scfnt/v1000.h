@@ -2,6 +2,10 @@
 
 // reversed from files
 
+#ifdef v1000
+#undef v1000
+#endif
+
 namespace ucsl::resources::scfnt::v1000 {
     struct alignas(8) SubCharacter {
         wchar_t character;

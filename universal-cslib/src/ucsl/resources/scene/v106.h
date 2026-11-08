@@ -2,30 +2,47 @@
 #include <ucsl/bitset.h>
 #include <ucsl/math.h>
 
-//reversed from files, by ik-01!
+// Based on research by ik-01!
 
-namespace ucsl::resources::scene::v106{
+namespace ucsl::resources::scene::v106 {
     struct TrackNode {
 		struct CurveData {
+			enum class InterpolationType : unsigned int {
+				HERMITE = 1,
+				LINEAR
+			};
+
+			enum class PrePostBehavior : unsigned int {
+				CLAMP,
+				LOOP,
+				LOOP1, // acts identically as LOOP...
+				BOUNCE,
+				EXTRAPOLATION
+			};
+
 			struct Keyframe {
 				float frame;
 				float value;
-				ucsl::math::Vector2 smoothingX; //Not sure on both of these
-				ucsl::math::Vector2 smoothingY; //Not sure on both of these
+				ucsl::math::Vector2 smoothingX;
+				ucsl::math::Vector2 smoothingY;
 				char flags0;
 				char flags1;
+				int unk0;
 			};
 
 			Keyframe* keyframes;
 			unsigned int keyframeCount;
-			int unk0;
-			long long unk1;
+			InterpolationType interpolationType;
+			PrePostBehavior preBehavior;
+			PrePostBehavior postBehavior;
 		};
 
-		int trackType;
+		int trackType; // if not zero, frame end is endless, and in file it's int
 		float frameStart;
 		float frameEnd;
-		long long unk;
+		int unk0;
+		int unk1; // if track type 0, and this is 2, frame end is endless, and in file it's int
+		int unk2;
 		CurveData* curveData;
 	};
 
@@ -37,10 +54,20 @@ namespace ucsl::resources::scene::v106{
 			SCENE_CONTROL_MODEL
 		};
 
+		struct Animation {
+			const char* name;
+			unsigned int sceneNodeIndex;
+		};
+
+		union Value {
+			unsigned int sceneControl; // Control Node Index
+			Animation animation;
+		};
+
 		TrackNode** trackNodes;
 		unsigned int trackNodeCount;
 		NodeType type;
-		int index;
+		Value value;
 	};
 
 	struct Timeline {
@@ -81,27 +108,27 @@ namespace ucsl::resources::scene::v106{
 		enum class ResourceType : unsigned char {
 			ResNull,
 			ResModel,
-			ResMirageTerrainModel,
+			ResTerrainModel,
 			ResMirageTerrainInstanceInfo,
 			ResEffect,
 			ResSkeleton,
-			ResAnimSkeleton,
+			ResAnimation,
 			ResAnimMaterial,
 			ResAnimTexPat,
 			ResAnimTexSrt,
 			ResAnimVis,
 			ResAnimCameraContainer,
 			ResAnimLightContainer,
-			ResMirageList,
+			ResMirageLight,
 			ResExternal
 		};
 
 		const char* nodeName;
 		const char* resourceName;
 		const char* resourceDirectory;
-		ucsl::math::Vector3 position;
-		ucsl::math::Vector3 rotation;
-		ucsl::math::Vector3 scale;
+		ucsl::math::Position position;
+		ucsl::math::Position rotation;
+		ucsl::math::Position scale;
 		ResourceType resourceType;
 		bool isAnimation;
 		ucsl::bits::Bitset<Flag> flags;
@@ -117,10 +144,10 @@ namespace ucsl::resources::scene::v106{
 			INTEGER,
 			STRING,
 			VECTOR3,
-			UNKNOWN2
+			UNKNOWN2 // if this is set, the node gets treated as string?? @ ResScene Load func
 		};
 
-		union Value{
+		union Value {
             bool b;
             float f;
             double d;
@@ -132,6 +159,8 @@ namespace ucsl::resources::scene::v106{
 		const char* parameterName;
 		const char* nodeName1;
 		Type type;
+		char unk0;
+		char unk1;
 		Value value;
 	};
 

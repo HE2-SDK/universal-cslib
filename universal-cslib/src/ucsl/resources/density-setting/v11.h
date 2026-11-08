@@ -4,8 +4,8 @@
 namespace ucsl::resources::density_setting::v11 {
 	// see 0x140A0DA41 in rangers 1.41
 	enum class ModelFlag : unsigned int {
-		UNK0,
-		UNK1,
+		IS_SHADOW_CASTER,
+		NO_SHADOW_CAST
 	};
 
 	struct Model {

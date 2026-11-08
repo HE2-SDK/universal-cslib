@@ -485,6 +485,7 @@ namespace ucsl::rfl {
 	}
 
 	using wars = v1<type_sets::wars>;
+	using hite = v1<type_sets::rangers>;
 	using rangers = v1<type_sets::rangers>;
 	using miller = v2<type_sets::rangers>;
 }

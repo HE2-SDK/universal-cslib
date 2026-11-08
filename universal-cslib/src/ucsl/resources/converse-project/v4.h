@@ -64,7 +64,7 @@ namespace ucsl::resources::converse_project::v4 {
         int* unk8;
         int* unk9;
         int* unk10;
-        int* unk11;
+        int* decoTechParamIndex;
     };
 
     template<typename T>
