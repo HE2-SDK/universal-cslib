@@ -86,7 +86,7 @@ namespace ucsl::reflection::accessors {
 
 				auto item_type = refl.get_item_type();
 
-				construct(item_type, this->allocator, &loc);
+				construct(item_type, this->get_allocator(), &loc);
 
 				this->length++;
 
