@@ -985,6 +985,11 @@ namespace ucsl::resources::swif::v3 {
         SRS_TRS3D* transforms3d;
     };
 
+    enum class EResolutionMode {
+        DIRECT,
+        RESOLUTION_INDEPENDENT,
+    };
+
     struct SRS_LAYER {
         const char* name{};
         unsigned int id{};
@@ -1006,6 +1011,14 @@ namespace ucsl::resources::swif::v3 {
                 flags |= 0x1;
             else
                 flags &= ~0x1;
+        }
+
+        inline EResolutionMode GetResolutionMode() const {
+            return static_cast<EResolutionMode>((flags >> 4) & 0xF);
+        }
+
+        inline void SetResolutionMode(EResolutionMode pivotType) {
+            flags = (flags & ~(0xF << 4)) | ((static_cast<unsigned int>(pivotType) & 0xF) << 4);
         }
 
         inline bool GetHideFlag() const {

@@ -989,7 +989,7 @@ namespace ucsl::resources::swif::v6 {
     };
 
     enum class EResolutionMode {
-        ABSOLUTE,
+        DIRECT,
         RESOLUTION_INDEPENDENT,
     };
 

@@ -621,14 +621,18 @@ namespace ucsl::resources::swif::v6::reflections {
 		field<dynamic_carray<SRS_TRS3D, field_resolver<int, "castCount">>*, "transforms3d">
 	>;
 
+	using EResolutionMode = enumeration<impl::EResolutionMode, "EResolutionMode", unsigned int,
+		option<"DIRECT">,
+		option<"RESOLUTION_INDEPENDENT">
+	>;
+
 	using SRS_LAYER = structure<impl::SRS_LAYER, "SRS_LAYER", void,
 		field<const char*, "name">,
 		field<unsigned int, "id">,
 		field<bitfield<unsigned int,
 			component<bool, "is3D", 0, 1>,
 			component<unsigned char, "unk0", 1, 3>,
-			component<bool, "unk1", 4, 1>,
-			component<unsigned char, "unk2", 5, 3>,
+			component<EResolutionMode, "resolutionMode", 4, 4>,
 			component<bool, "hide", 8, 1>,
 			component<unsigned char, "unk3", 9, 7>,
 			component<bool, "unk4", 16, 1>,
